@@ -1,0 +1,585 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RecipeBook Launch Portal</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg-dark: #0b0f19;
+        --glass-bg: rgba(17, 24, 39, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --primary: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+        --primary-hover: linear-gradient(135deg, #fb923c 0%, #f87171 100%);
+        --accent: #ffd29a;
+        --text-main: #f3f4f6;
+        --text-muted: #9ca3af;
+        --success: #10b981;
+        --error: #ef4444;
+        --warning: #f59e0b;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        background-image: radial-gradient(
+            at 0% 0%,
+            rgba(249, 115, 22, 0.15) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 100% 100%,
+            rgba(239, 68, 68, 0.15) 0px,
+            transparent 50%
+          ),
+          radial-gradient(
+            at 50% 50%,
+            rgba(99, 102, 241, 0.05) 0px,
+            transparent 50%
+          );
+        background-attachment: fixed;
+        font-family: "Outfit", sans-serif;
+        color: var(--text-main);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem 1rem;
+        overflow-x: hidden;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 840px;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        background-color: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 3rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.8s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .logo-wrapper {
+        margin-bottom: 1.2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(249, 115, 22, 0.1);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+        padding: 1.1rem;
+        border-radius: 22px;
+        color: #f97316;
+        animation: float 4s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      h1 {
+        font-size: 2.6rem;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        background: linear-gradient(to right, #f97316, #ef4444, #f43f5e);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.6rem;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 1.1rem;
+        font-weight: 300;
+      }
+
+      /* Live Server Status Bar */
+      .status-panel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 1rem 1.5rem;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .status-info {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .status-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: var(--warning);
+        box-shadow: 0 0 12px var(--warning);
+        transition: all 0.5s ease;
+      }
+
+      .status-dot.online {
+        background-color: var(--success);
+        box-shadow: 0 0 12px var(--success);
+        animation: pulse-green 2s infinite;
+      }
+
+      @keyframes pulse-green {
+        0% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+        }
+      }
+
+      .status-dot.offline {
+        background-color: var(--error);
+        box-shadow: 0 0 12px var(--error);
+        animation: pulse-red 2s infinite;
+      }
+
+      @keyframes pulse-red {
+        0% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+      }
+
+      .status-text {
+        font-weight: 600;
+        font-size: 0.95rem;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      .status-address {
+        font-family: monospace;
+        color: var(--accent);
+        background: rgba(255, 153, 0, 0.08);
+        border: 1px solid rgba(255, 153, 0, 0.15);
+        padding: 0.3rem 0.6rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+
+      /* Main Action Area */
+      .action-panel {
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+
+      .launch-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.85rem;
+        background: var(--primary);
+        color: white;
+        text-decoration: none;
+        font-size: 1.25rem;
+        font-weight: 700;
+        padding: 1.2rem 2.5rem;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 100%;
+        max-width: 380px;
+        border: none;
+        cursor: pointer;
+        outline: none;
+      }
+
+      .launch-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px -5px rgba(239, 68, 68, 0.6);
+        background: var(--primary-hover);
+      }
+
+      .launch-btn:active {
+        transform: translateY(0);
+      }
+
+      .launch-btn.disabled {
+        background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+        box-shadow: none;
+        cursor: not-allowed;
+      }
+
+      /* Offline Warning Box */
+      .offline-tip {
+        margin-top: 1.5rem;
+        padding: 1.1rem 1.4rem;
+        border-radius: 14px;
+        background: rgba(239, 68, 68, 0.08);
+        border: 1px solid rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        font-size: 0.95rem;
+        display: none;
+        text-align: left;
+        line-height: 1.6;
+        animation: slideDown 0.3s ease-out;
+      }
+
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Grid options */
+      .options-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        color: var(--text-main);
+        letter-spacing: 0.02em;
+      }
+
+      .options-title::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 3px;
+        background: #f97316;
+        margin: 0.5rem auto 0;
+        border-radius: 2px;
+      }
+
+      .options-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .option-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 20px;
+        padding: 1.6rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .option-card:hover {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.08);
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .card-icon {
+        color: #f97316;
+        margin-bottom: 1.1rem;
+        background: rgba(249, 115, 22, 0.08);
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .option-card:hover .card-icon {
+        background: rgba(249, 115, 22, 0.16);
+        color: #fb923c;
+      }
+
+      .card-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin-bottom: 0.6rem;
+        color: var(--text-main);
+      }
+
+      .card-desc {
+        font-size: 0.92rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        flex-grow: 1;
+        margin-bottom: 1.25rem;
+      }
+
+      .card-action {
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: var(--accent);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: auto;
+      }
+
+      .code-badge {
+        font-family: monospace;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.1rem 0.3rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        color: #ffd29a;
+      }
+
+      footer {
+        margin-top: 3.5rem;
+        text-align: center;
+        font-size: 0.85rem;
+        color: #4b5563;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo-wrapper">
+          <!-- Premium Custom Cookbook SVG Icon -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="36"
+            height="36"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+            <path d="M6 6h10" />
+            <path d="M6 10h10" />
+            <path d="M6 14h10" />
+            <path d="M8 18h8" />
+          </svg>
+        </div>
+        <h1>RecipeBook Portal</h1>
+        <p class="subtitle">Quick Launch Console & Server Dashboard</p>
+      </header>
+
+      <!-- Live Server Status -->
+      <section class="status-panel">
+        <div class="status-info">
+          <div id="statusDot" class="status-dot"></div>
+          <span id="statusLabel" class="status-text">Checking server...</span>
+        </div>
+        <div>
+          <span class="status-address">http://localhost:3010</span>
+        </div>
+      </section>
+
+      <!-- Main Action Launch Button -->
+      <section class="action-panel">
+        <a id="launchBtn" href="http://localhost:3010" class="launch-btn disabled" target="_blank">
+          <span>Starting Server...</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" y1="14" x2="21" y2="3" />
+          </svg>
+        </a>
+
+        <!-- Helpful advice when server is offline -->
+        <div id="offlineTip" class="offline-tip">
+          <strong>Next.js Server is not running yet.</strong> To open the webpage, you need to start the backend. Double-click the
+          <span class="code-badge">CREATE-DESKTOP-SHORTCUT.bat</span> file in File Explorer to add a handy launcher icon to your desktop, or use the instructions below.
+        </div>
+      </section>
+
+      <!-- Options Grid -->
+      <h2 class="options-title">Automated Start Methods</h2>
+      <section class="options-grid">
+        <!-- Card 1: Desktop Shortcut -->
+        <div class="option-card">
+          <div class="card-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="3" y="3" width="18" height="14" rx="2" ry="2" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+            </svg>
+          </div>
+          <h3 class="card-title">Desktop Launcher</h3>
+          <p class="card-desc">
+            Double-click the <span class="code-badge">CREATE-DESKTOP-SHORTCUT.bat</span> file to place a shortcut on your Desktop. Launches both the server and webpage in 1-click!
+          </p>
+          <div class="card-action">Runs automatically</div>
+        </div>
+
+        <!-- Card 2: Startup shortcut -->
+        <div class="option-card">
+          <div class="card-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+          </div>
+          <h3 class="card-title">Run on Windows Startup</h3>
+          <p class="card-desc">
+            Double-click <span class="code-badge">SETUP-RUN-ON-STARTUP.bat</span> to register a background task. The server starts silently in the background when Windows boots, so this link always works!
+          </p>
+          <div class="card-action">Silent boot</div>
+        </div>
+
+        <!-- Card 3: VS Code Auto task -->
+        <div class="option-card">
+          <div class="card-icon">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="16 18 22 12 16 6" />
+              <polyline points="8 6 2 12 8 18" />
+            </svg>
+          </div>
+          <h3 class="card-title">VS Code Auto-Task</h3>
+          <p class="card-desc">
+            Open this folder in VS Code. The Next.js server automatically boots inside the integrated terminal in the background.
+          </p>
+          <div class="card-action">Workspace integration</div>
+        </div>
+      </section>
+
+      <footer>
+        <p>RecipeBook Launcher &bull; Designed with &hearts; for Recipe App</p>
+      </footer>
+    </div>
+
+    <!-- Active status polling script -->
+    <script>
+      const url = "http://localhost:3010";
+      const statusDot = document.getElementById("statusDot");
+      const statusLabel = document.getElementById("statusLabel");
+      const launchBtn = document.getElementById("launchBtn");
+      const offlineTip = document.getElementById("offlineTip");
+
+      function updateStatus(isOnline) {
+        if (isOnline) {
+          statusDot.className = "status-dot online";
+          statusLabel.textContent = "Server is active";
+          statusLabel.style.color = "var(--success)";
+          launchBtn.className = "launch-btn";
+          launchBtn.querySelector("span").textContent = "Launch RecipeBook";
+          offlineTip.style.display = "none";
+        } else {
+          statusDot.className = "status-dot offline";
+          statusLabel.textContent = "Server is offline";
+          statusLabel.style.color = "var(--error)";
+          launchBtn.className = "launch-btn disabled";
+          launchBtn.querySelector("span").textContent = "Start Server to Launch";
+          offlineTip.style.display = "block";
+        }
+      }
+
+      function checkServer() {
+        // Use fetch with a very short timeout and no-cors mode to bypass CORS errors
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1200);
+
+        fetch(url, { mode: "no-cors", signal: controller.signal })
+          .then(() => {
+            clearTimeout(timeoutId);
+            updateStatus(true);
+          })
+          .catch(() => {
+            clearTimeout(timeoutId);
+            updateStatus(false);
+          });
+      }
+
+      // Initial check
+      checkServer();
+      // Poll every 3 seconds
+      setInterval(checkServer, 3000);
+    </script>
+  </body>
+</html>

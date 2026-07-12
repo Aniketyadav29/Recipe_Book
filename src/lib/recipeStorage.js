@@ -1,0 +1,111 @@
+// ─── Recipe Storage Utility (localStorage) ───────────────────────────────────
+// Manages community-submitted recipes: pending queue and approved list.
+
+const PENDING_KEY = "recipebook_pending";
+const APPROVED_KEY = "recipebook_approved";
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function safeRead(key) {
+    if (typeof window === "undefined") return [];
+    try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : [];
+    } catch {
+        return [];
+    }
+}
+
+function safeWrite(key, data) {
+    if (typeof window === "undefined") return;
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (e) {
+        console.error("localStorage write error:", e);
+    }
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
+
+/** Returns all pending (unreviewed) community recipes */
+export function getPendingRecipes() {
+    return safeRead(PENDING_KEY);
+}
+
+/** Returns all admin-approved community recipes */
+export function getApprovedRecipes() {
+    return safeRead(APPROVED_KEY);
+}
+
+/** Returns one approved community recipe by id */
+export function getApprovedRecipeById(id) {
+    return safeRead(APPROVED_KEY).find((recipe) => String(recipe.id) === String(id));
+}
+
+/**
+ * Submits a new recipe to the pending queue.
+ * @param {Object} recipeData - Form data from the submission form
+ * @returns {Object} The saved recipe with generated id/timestamp
+ */
+export function submitRecipe(recipeData) {
+    const pending = safeRead(PENDING_KEY);
+    const newRecipe = {
+        ...recipeData,
+        id: `community_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+        isCommunity: true,
+        status: "pending",
+        submittedAt: new Date().toISOString(),
+        rating: 0,
+        reviewCount: 0,
+    };
+    pending.push(newRecipe);
+    safeWrite(PENDING_KEY, pending);
+    return newRecipe;
+}
+
+/**
+ * Approves a pending recipe — moves it to the approved list.
+ * @param {string} id - Recipe id to approve
+ */
+export function approveRecipe(id) {
+    const pending = safeRead(PENDING_KEY);
+    const approved = safeRead(APPROVED_KEY);
+
+    const index = pending.findIndex((r) => r.id === id);
+    if (index === -1) return false;
+
+    const [recipe] = pending.splice(index, 1);
+    recipe.status = "approved";
+    recipe.approvedAt = new Date().toISOString();
+
+    approved.push(recipe);
+    safeWrite(PENDING_KEY, pending);
+    safeWrite(APPROVED_KEY, approved);
+    return true;
+}
+
+/**
+ * Rejects and removes a pending recipe.
+ * @param {string} id - Recipe id to reject
+ */
+export function rejectRecipe(id) {
+    const pending = safeRead(PENDING_KEY);
+    const filtered = pending.filter((r) => r.id !== id);
+    safeWrite(PENDING_KEY, filtered);
+    return filtered.length < pending.length;
+}
+
+/**
+ * Removes an approved recipe from the approved list.
+ * @param {string} id - Recipe id to remove
+ */
+export function removeApprovedRecipe(id) {
+    const approved = safeRead(APPROVED_KEY);
+    const filtered = approved.filter((r) => r.id !== id);
+    safeWrite(APPROVED_KEY, filtered);
+}
+
+/** Returns count of pending recipes (for badge display) */
+export function getPendingCount() {
+    return safeRead(PENDING_KEY).length;
+}

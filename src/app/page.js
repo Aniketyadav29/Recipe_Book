@@ -264,6 +264,67 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* ───── COMMUNITY SUBMISSION CTA ───── */}
+            <section id="community" className="py-28 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <div className="rounded-3xl bg-gradient-to-br from-purple-900/20 via-[#0f0f0f] to-orange-900/15 border border-white/[0.07] p-10 md:p-16 relative overflow-hidden">
+                        {/* Background decoration */}
+                        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/8 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-72 h-72 bg-orange-500/8 rounded-full blur-3xl pointer-events-none" />
+                        <span className="absolute top-8 right-16 text-4xl opacity-10 hidden lg:block select-none animate-float">🍝</span>
+                        <span className="absolute bottom-8 right-32 text-3xl opacity-10 hidden lg:block select-none animate-float" style={{ animationDelay: "2s" }}>🥘</span>
+
+                        <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-14 items-center">
+                            {/* Text side */}
+                            <div>
+                                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-sm font-semibold mb-6">
+                                    👥 Community Recipes
+                                </span>
+                                <h2 className="text-4xl font-extrabold mb-6 leading-tight">
+                                    Have a Secret
+                                    <span className="block bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent">
+                                        Family Recipe?
+                                    </span>
+                                </h2>
+                                <p className="text-gray-400 text-lg leading-relaxed mb-5">
+                                    Share your favourite dishes with our growing community of food lovers.
+                                    Submit your recipe and — after a quick review — it will be featured
+                                    in the RecipeBook for thousands of cooks to enjoy.
+                                </p>
+                                <p className="text-gray-500 text-base leading-relaxed mb-8">
+                                    Every great recipe has a story. Yours deserves to be told. 🌟
+                                </p>
+                                <Link
+                                    href="/submit-recipe"
+                                    className="inline-flex items-center gap-2 px-7 py-3.5 bg-gradient-to-r from-purple-500 to-orange-500 text-white font-bold rounded-xl hover:scale-105 hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300"
+                                >
+                                    🍽️ Submit Your Recipe →
+                                </Link>
+                            </div>
+
+                            {/* How it works */}
+                            <div className="space-y-4">
+                                {[
+                                    { step: "1", icon: "📝", title: "Fill the Form", desc: "Add your recipe name, ingredients, step-by-step instructions and a photo." },
+                                    { step: "2", icon: "⏳", title: "Pending Review", desc: "Our admin team reviews your recipe for quality and completeness." },
+                                    { step: "3", icon: "✅", title: "Goes Live!", desc: "Once approved, your recipe appears in RecipeBook with a Community badge!" },
+                                ].map(({ step, icon, title, desc }) => (
+                                    <div key={step} className="flex items-start gap-4 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.07] hover:border-purple-500/25 hover:bg-white/[0.05] transition-all duration-300">
+                                        <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500/20 to-orange-500/20 border border-purple-500/20 flex items-center justify-center text-lg">
+                                            {icon}
+                                        </div>
+                                        <div>
+                                            <h3 className="text-white font-bold mb-1">{title}</h3>
+                                            <p className="text-gray-500 text-sm leading-relaxed">{desc}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* ───── FINAL CTA ───── */}
             <section className="py-28 px-6">
                 <div className="max-w-4xl mx-auto text-center relative">

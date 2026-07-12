@@ -77,6 +77,30 @@ body {
   animation: scroll-dot 1.8s ease-in-out infinite;
 }
 
+.recipe-card-stage {
+  perspective: 1200px;
+}
+
+.recipe-card-3d {
+  transform-style: preserve-3d;
+}
+
+.recipe-card-3d:hover {
+  transform: translateY(-10px) rotateX(7deg) rotateY(-5deg);
+}
+
+.recipe-card-3d:hover::after {
+  transform: translateY(12px) scaleX(1.15);
+  opacity: 0.85;
+}
+
+.recipe-detail-3d {
+  transform-style: preserve-3d;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

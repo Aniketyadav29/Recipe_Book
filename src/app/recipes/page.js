@@ -2,6 +2,7 @@
 import RecipeList from "@/components/recipes";
 import React, { useState, useEffect } from "react";
 import Loader from "../loading";
+import { getApprovedRecipes } from "@/lib/recipeStorage";
 
 async function fetchListOfRecipes() {
     try {
@@ -12,7 +13,7 @@ async function fetchListOfRecipes() {
         return data.recipes;
     } catch (error) {
         console.error("Failed to fetch recipes:", error);
-        return null; // Return null in case of error
+        return null;
     }
 }
 
@@ -23,18 +24,24 @@ const Page = () => {
     useEffect(() => {
         const loadRecipes = async () => {
             const fetchedRecipes = await fetchListOfRecipes();
-            setRecipes(fetchedRecipes);
+            // Merge approved community recipes from localStorage
+            const communityRecipes = getApprovedRecipes();
+            const merged = [
+                ...communityRecipes,                    // community first
+                ...(fetchedRecipes || []),
+            ];
+            setRecipes(merged.length > 0 ? merged : fetchedRecipes);
             setLoading(false);
         };
         loadRecipes();
     }, []);
 
     if (loading) {
-        return <Loader />; // Display loading state
+        return <Loader />;
     }
 
     if (!recipes) {
-        return <p>Failed to load recipes. Please try again later.</p>; // Handle null or undefined recipes
+        return <p>Failed to load recipes. Please try again later.</p>;
     }
 
     return <RecipeList recipes={recipes} />;

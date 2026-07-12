@@ -15,10 +15,11 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { href: "#home", label: "Home" },
-        { href: "#features", label: "Features" },
-        { href: "#pantry-chef", label: "Pantry Chef AI" },
-        { href: "#about", label: "About Us" },
+        { href: "/#home", label: "Home" },
+        { href: "/#features", label: "Features" },
+        { href: "/#pantry-chef", label: "Pantry Chef AI" },
+        { href: "/#about", label: "About Us" },
+        { href: "/submit-recipe", label: "Share Recipe" },
     ];
 
     return (
@@ -50,6 +51,13 @@ export default function Navbar() {
                             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-400 group-hover:w-full transition-all duration-300 rounded-full" />
                         </a>
                     ))}
+                    <Link
+                        href="/admin"
+                        title="Admin Panel"
+                        className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-orange-400 hover:border-orange-500/30 hover:bg-orange-500/10 transition-all duration-300 text-sm"
+                    >
+                        🛡️
+                    </Link>
                     <Link
                         href="/recipes"
                         className="px-5 py-2.5 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-full hover:scale-105 hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 text-sm"

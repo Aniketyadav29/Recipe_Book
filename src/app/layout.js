@@ -1,10 +1,7 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import LightDarkMode from "@/components/ui/LightDarkMode";
 import Loader from "./loading";
-
-const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata = {
     title: "RecipeBook — Discover & Cook Amazing Recipes",
@@ -14,7 +11,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en" className={inter.className}>
+        <html lang="en" className="font-sans">
             <head>
                 <meta
                     name="viewport"
