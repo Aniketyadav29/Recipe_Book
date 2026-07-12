@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
     Card,
     CardContent,
@@ -7,10 +8,21 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import AISearchBox from "./AISearchBox";
 
 export default function RecipeList({ recipes }) {
-    const communityCount = recipes?.filter((r) => r.isCommunity).length || 0;
-    const totalRecipes = recipes?.length || 0;
+    const [localRecipes, setLocalRecipes] = useState(recipes);
+
+    useEffect(() => {
+        setLocalRecipes(recipes);
+    }, [recipes]);
+
+    const handleAISave = (newRecipe) => {
+        setLocalRecipes((prev) => [newRecipe, ...prev]);
+    };
+
+    const communityCount = localRecipes?.filter((r) => r.isCommunity).length || 0;
+    const totalRecipes = localRecipes?.length || 0;
 
     return (
         <div className="relative z-10 overflow-hidden px-4 pb-16 pt-4 sm:px-6">
@@ -34,6 +46,8 @@ export default function RecipeList({ recipes }) {
                         <p className="mx-auto mb-7 max-w-2xl text-base leading-relaxed text-gray-400 sm:text-lg">
                             Browse crisp recipe cards, open full cooking instructions, and enjoy approved community dishes right beside the collection.
                         </p>
+
+                        <AISearchBox onRecipeSaved={handleAISave} />
 
                         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
                             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/20 px-5 py-2.5 text-sm font-semibold text-gray-300">
@@ -59,8 +73,8 @@ export default function RecipeList({ recipes }) {
                 </div>
 
                 <div className="recipe-card-stage grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {recipes && recipes.length > 0 ? (
-                        recipes.map((recipe) => (
+                    {localRecipes && localRecipes.length > 0 ? (
+                        localRecipes.map((recipe) => (
                             <Link
                                 key={recipe.id}
                                 href={`/recipes/${encodeURIComponent(recipe.id)}`}
