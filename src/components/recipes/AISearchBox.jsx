@@ -8,6 +8,7 @@ export default function AISearchBox({ onRecipeSaved }) {
     const [statusText, setStatusText] = useState("AI Chef is thinking...");
     const [recipe, setRecipe] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [error, setError] = useState("");
 
     // Dynamic loading status messages
     useEffect(() => {
@@ -37,6 +38,7 @@ export default function AISearchBox({ onRecipeSaved }) {
 
         setLoading(true);
         setRecipe(null);
+        setError("");
 
         try {
             const res = await fetch("/api/ai-recipe", {
@@ -52,11 +54,12 @@ export default function AISearchBox({ onRecipeSaved }) {
                 setRecipe(data);
                 setShowModal(true);
             } else {
-                alert("Failed to generate recipe. Please try again.");
+                const data = await res.json().catch(() => null);
+                setError(data?.error || "Failed to generate recipe. Please try again.");
             }
         } catch (err) {
             console.error(err);
-            alert("Error connecting to the AI Chef.");
+            setError("Error connecting to the AI Chef.");
         } finally {
             setLoading(false);
         }
@@ -74,24 +77,49 @@ export default function AISearchBox({ onRecipeSaved }) {
     };
 
     return (
-        <div className="mx-auto mt-7 w-full max-w-xl px-4 relative z-20">
-            <form onSubmit={handleAISearch} className="relative flex items-center">
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Craving something? Ask AI Chef (e.g. Garlic Butter Shrimp)..."
-                    disabled={loading}
-                    className="w-full rounded-full border border-white/10 bg-black/45 py-4 pl-6 pr-36 text-sm text-white placeholder-gray-500 backdrop-blur-md outline-none transition-all duration-300 focus:border-orange-500/50 focus:ring-4 focus:ring-orange-500/10 disabled:opacity-70"
-                />
-                <button
-                    type="submit"
-                    disabled={loading || !searchQuery.trim()}
-                    className="absolute right-2 rounded-full bg-gradient-to-r from-orange-500 to-rose-500 px-6 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-500/20 transition-all duration-300 hover:scale-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50"
-                >
-                    {loading ? "Cooking..." : "Ask AI Chef 🍳"}
-                </button>
-            </form>
+        <div className="relative z-20 mx-auto mt-8 w-full max-w-3xl">
+            <div className="rounded-2xl border border-orange-300/20 bg-[#17120f]/95 p-4 shadow-2xl shadow-black/30 sm:p-5">
+                <div className="mb-3 flex flex-col gap-1 text-left sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                        <p className="text-sm font-extrabold uppercase tracking-widest text-orange-300">
+                            AI Recipe Search
+                        </p>
+                        <p className="text-sm text-gray-400">
+                            Type a recipe name and get matching ingredients.
+                        </p>
+                    </div>
+                    <span className="text-xs font-semibold text-gray-500">
+                        Example: Gulab Jamun, Pasta, Fried Rice
+                    </span>
+                </div>
+
+                <form onSubmit={handleAISearch} className="flex flex-col gap-3 sm:flex-row">
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            if (error) setError("");
+                        }}
+                        placeholder="Enter recipe name..."
+                        disabled={loading}
+                        className="min-h-12 flex-1 rounded-xl border border-white/10 bg-black/35 px-4 text-base text-white placeholder-gray-500 outline-none transition-all duration-200 focus:border-orange-300/60 focus:ring-4 focus:ring-orange-500/10 disabled:opacity-70"
+                    />
+                    <button
+                        type="submit"
+                        disabled={loading || !searchQuery.trim()}
+                        className="min-h-12 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-6 text-sm font-extrabold text-white shadow-lg shadow-orange-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-orange-500/35 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50"
+                    >
+                        {loading ? "Cooking..." : "Ask AI Chef"}
+                    </button>
+                </form>
+
+                {error && (
+                    <p className="mt-3 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-2 text-left text-sm font-medium text-red-300">
+                        {error}
+                    </p>
+                )}
+            </div>
 
             {/* Sizzling Loading Overlay */}
             {loading && (
@@ -123,8 +151,7 @@ export default function AISearchBox({ onRecipeSaved }) {
                             <div className="mb-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-xs md:text-sm text-yellow-300 flex items-start gap-2.5 leading-relaxed">
                                 <span className="mt-0.5 text-base">💡</span>
                                 <div>
-                                    <span className="font-bold">Fast Offline Mode (Simulated AI)</span>. 
-                                    To fetch recipe data using real-time Gemini AI, simply add your <code className="bg-black/30 px-1.5 py-0.5 rounded font-mono text-orange-200">GEMINI_API_KEY</code> to the project's <code className="bg-black/30 px-1.5 py-0.5 rounded font-mono text-orange-200">.env.local</code> file!
+                                    <span className="font-bold">Offline AI mode</span>. This recipe was generated locally from the dish name.
                                 </div>
                             </div>
                         )}

@@ -2,6 +2,36 @@ import { NextResponse } from "next/server";
 
 // Smart Fallback Recipe Database for common requests
 const PRESETS = {
+    "gulab jamun": {
+        name: "Soft Gulab Jamun",
+        ingredients: [
+            "1 cup Milk Powder",
+            "3 tbsp All-Purpose Flour",
+            "1 tbsp Ghee",
+            "1/4 tsp Baking Powder",
+            "3-4 tbsp Milk, added gradually",
+            "Oil or Ghee for deep frying",
+            "1 1/2 cups Sugar",
+            "1 1/2 cups Water",
+            "4 Green Cardamom Pods, lightly crushed",
+            "1 tsp Rose Water or a few saffron strands"
+        ],
+        instructions: [
+            "Simmer sugar, water, cardamom, and rose water for 7-8 minutes to make a light syrup. Keep it warm.",
+            "Mix milk powder, flour, baking powder, and ghee in a bowl.",
+            "Add milk little by little and gently bring the mixture into a soft dough. Do not knead hard.",
+            "Rest the dough for 8-10 minutes, then roll into smooth crack-free balls.",
+            "Heat oil or ghee on low-medium heat and fry the balls slowly until deep golden brown.",
+            "Transfer the hot jamuns into warm syrup and soak for at least 1 hour before serving."
+        ],
+        difficulty: "Medium",
+        caloriesPerServing: 280,
+        prepTimeMinutes: 20,
+        cookTimeMinutes: 25,
+        servings: 6,
+        cuisine: "Indian",
+        tags: ["Dessert", "Sweet", "Festival", "Indian"]
+    },
     carbonara: {
         name: "Classic Spaghetti Carbonara",
         ingredients: [
@@ -119,147 +149,40 @@ const PRESETS = {
     }
 };
 
-// Smart Local Fallback Generator for any unspecified food
-function generateSimulatedRecipe(query) {
-    const cleanQuery = query.trim().toLowerCase();
-    
-    // Check if we have a preset
-    for (const key in PRESETS) {
-        if (cleanQuery.includes(key)) {
-            return { ...PRESETS[key], isSimulated: true };
-        }
-    }
+const QUERY_ALIASES = [
+    { keys: ["gulabjamun", "gulab jamun", "jamun"], preset: "gulab jamun" },
+    { keys: ["carbonara"], preset: "carbonara" },
+    { keys: ["margherita", "pizza"], preset: "pizza" },
+    { keys: ["biryani"], preset: "biryani" },
+    { keys: ["burger"], preset: "burger" },
+];
 
-    // Capitalize words
-    const capitalizedName = query
-        .split(" ")
-        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+function titleCase(value) {
+    return value
+        .trim()
+        .split(/\s+/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
         .join(" ");
+}
 
-    // Determine cuisine type based on keywords
-    let cuisine = "Global";
-    if (cleanQuery.includes("taco") || cleanQuery.includes("quesadilla") || cleanQuery.includes("fajita") || cleanQuery.includes("burrito") || cleanQuery.includes("salsa")) {
-        cuisine = "Mexican";
-    } else if (cleanQuery.includes("pasta") || cleanQuery.includes("pizza") || cleanQuery.includes("risotto") || cleanQuery.includes("lasagna") || cleanQuery.includes("gnocchi")) {
-        cuisine = "Italian";
-    } else if (cleanQuery.includes("curry") || cleanQuery.includes("tikka") || cleanQuery.includes("masala") || cleanQuery.includes("paneer") || cleanQuery.includes("naan") || cleanQuery.includes("samosa")) {
-        cuisine = "Indian";
-    } else if (cleanQuery.includes("sushi") || cleanQuery.includes("ramen") || cleanQuery.includes("teriyaki") || cleanQuery.includes("tempura") || cleanQuery.includes("miso")) {
-        cuisine = "Japanese";
-    } else if (cleanQuery.includes("stir fry") || cleanQuery.includes("noodles") || cleanQuery.includes("fried rice") || cleanQuery.includes("dumpling") || cleanQuery.includes("wonton")) {
-        cuisine = "Chinese";
-    } else if (cleanQuery.includes("croissant") || cleanQuery.includes("crepe") || cleanQuery.includes("souffle") || cleanQuery.includes("quiche")) {
-        cuisine = "French";
-    } else if (cleanQuery.includes("burger") || cleanQuery.includes("steak") || cleanQuery.includes("fries") || cleanQuery.includes("bbq")) {
-        cuisine = "American";
-    }
+function hasAny(text, words) {
+    return words.some((word) => text.includes(word));
+}
 
-    // Determine difficulty
-    const difficulty = cleanQuery.includes("bake") || cleanQuery.includes("stew") || cleanQuery.includes("roasted") || cleanQuery.includes("sauce") ? "Medium" : "Easy";
-
-    // Set core ingredients
-    const ingredients = [];
-    const instructions = [];
-    const tags = ["AI Generated"];
-
-    // Detect primary items
-    let hasMeat = false;
-    let mainProtein = "";
-    
-    if (cleanQuery.includes("chicken")) {
-        ingredients.push("450g Chicken Breasts or Thighs, bite-sized");
-        hasMeat = true;
-        mainProtein = "chicken";
-        tags.push("Chicken", "High-Protein");
-    } else if (cleanQuery.includes("beef") || cleanQuery.includes("steak")) {
-        ingredients.push("500g Beef Sirloin or Ground Beef");
-        hasMeat = true;
-        mainProtein = "beef";
-        tags.push("Beef", "High-Protein");
-    } else if (cleanQuery.includes("shrimp") || cleanQuery.includes("prawn")) {
-        ingredients.push("300g Fresh Shrimp, peeled and deveined");
-        hasMeat = true;
-        mainProtein = "Seafood";
-        tags.push("Seafood");
-    } else if (cleanQuery.includes("paneer") || cleanQuery.includes("tofu")) {
-        ingredients.push(cleanQuery.includes("paneer") ? "300g Paneer cubes" : "300g Firm Tofu, pressed and cubed");
-        tags.push("Vegetarian", "Tofu/Paneer");
-    } else {
-        tags.push("Vegetarian");
-    }
-
-    // Add secondary ingredients based on keywords
-    if (cleanQuery.includes("garlic")) {
-        ingredients.push("4 cloves Garlic, minced");
-    } else {
-        ingredients.push("2 cloves Garlic, minced");
-    }
-    
-    if (cleanQuery.includes("ginger")) {
-        ingredients.push("1-inch piece Fresh Ginger, grated");
-    }
-
-    if (cleanQuery.includes("spicy") || cleanQuery.includes("chili") || cleanQuery.includes("hot")) {
-        ingredients.push("1 tsp Red Chili Flakes or 1 Fresh Green Chili, sliced");
-        tags.push("Spicy");
-    }
-
-    if (cleanQuery.includes("cheese")) {
-        ingredients.push("1 cup Grated Cheese (Mozzarella, Cheddar or Parmesan)");
-        tags.push("Cheesy");
-    }
-
-    if (cleanQuery.includes("tomato") || cleanQuery.includes("sauce")) {
-        ingredients.push("1 can (400g) Crushed Tomatoes or Tomato Sauce");
-    }
-
-    if (cleanQuery.includes("lemon") || cleanQuery.includes("lime")) {
-        ingredients.push(cleanQuery.includes("lemon") ? "1 Lemon, zested and juiced" : "1 Lime, zested and juiced");
-    }
-
-    if (cleanQuery.includes("butter")) {
-        ingredients.push("3 tbsp Unsalted Butter");
-    } else {
-        ingredients.push("2 tbsp Olive Oil or Cooking Oil");
-    }
-
-    // Add standard staples
-    ingredients.push("1 Medium Onion, finely chopped");
-    ingredients.push("Salt and Freshly Cracked Black Pepper to taste");
-    ingredients.push("Fresh cilantro or parsley leaves for garnish");
-
-    // Construct Instructions dynamically
-    instructions.push(`Prepare all ingredients: chop the vegetables, mince the garlic, and prep your primary ingredients.`);
-    
-    if (hasMeat) {
-        instructions.push(`Season the ${mainProtein} with a pinch of salt, black pepper, and any desired spices.`);
-    }
-
-    instructions.push(`Heat the oil or melt the butter in a large skillet or pan over medium-high heat.`);
-    instructions.push(`Sauté the chopped onions, garlic, and ginger (if using) for 3-4 minutes until soft and fragrant.`);
-    
-    if (hasMeat) {
-        instructions.push(`Add the seasoned ${mainProtein} to the skillet. Cook for 6-8 minutes, stirring frequently, until browned and cooked through.`);
-    } else if (cleanQuery.includes("tofu") || cleanQuery.includes("paneer")) {
-        instructions.push(`Add the tofu/paneer cubes to the skillet. Sauté gently for 5 minutes until lightly golden on all sides.`);
-    }
-
-    if (cleanQuery.includes("tomato") || cleanQuery.includes("sauce") || cleanQuery.includes("curry")) {
-        instructions.push(`Pour in the crushed tomatoes or sauce base. Reduce heat to medium-low, stir well, and let it simmer for 10 minutes to develop the rich flavor profile.`);
-    } else {
-        instructions.push(`Add any remaining seasoning and toss the ingredients well to combine. Sauté for another 2-3 minutes.`);
-    }
-
-    instructions.push(`Remove from heat. Garnish with fresh herbs and serve immediately while hot.`);
-
-    // Randomize metadata parameters logically
-    const prepTimeMinutes = Math.floor(Math.random() * 11) + 10; // 10-20 mins
-    const cookTimeMinutes = Math.floor(Math.random() * 16) + 15; // 15-30 mins
-    const servings = Math.random() > 0.5 ? 4 : 2;
-    const caloriesPerServing = Math.floor(Math.random() * 250) + 300; // 300-550 kcal
-
+function createRecipe({
+    name,
+    cuisine = "Global",
+    difficulty = "Easy",
+    ingredients,
+    instructions,
+    tags = [],
+    prepTimeMinutes = 15,
+    cookTimeMinutes = 20,
+    servings = 4,
+    caloriesPerServing = 420,
+}) {
     return {
-        name: capitalizedName,
+        name,
         ingredients,
         instructions,
         difficulty,
@@ -268,9 +191,270 @@ function generateSimulatedRecipe(query) {
         cookTimeMinutes,
         servings,
         cuisine,
-        tags: tags.slice(0, 4), // Cap at 4 tags
-        isSimulated: true
+        tags: ["AI Generated", ...tags].slice(0, 5),
+        isSimulated: true,
     };
+}
+
+// Smart Local Fallback Generator for any unspecified food
+function generateSimulatedRecipe(query) {
+    const cleanQuery = query.trim().toLowerCase();
+
+    for (const alias of QUERY_ALIASES) {
+        if (alias.keys.some((key) => cleanQuery.includes(key))) {
+            return { ...PRESETS[alias.preset], isSimulated: true };
+        }
+    }
+
+    const name = titleCase(query);
+
+    if (hasAny(cleanQuery, ["cake", "cupcake", "brownie", "muffin", "cookie"])) {
+        return createRecipe({
+            name,
+            cuisine: "Bakery",
+            difficulty: "Medium",
+            prepTimeMinutes: 20,
+            cookTimeMinutes: 30,
+            servings: 8,
+            caloriesPerServing: 360,
+            tags: ["Dessert", "Baking", "Sweet"],
+            ingredients: [
+                "1 1/2 cups All-Purpose Flour",
+                "3/4 cup Sugar",
+                "1/2 cup Unsalted Butter or Oil",
+                "2 Large Eggs",
+                "1/2 cup Milk",
+                "1 1/2 tsp Baking Powder",
+                "1 tsp Vanilla Extract",
+                "Pinch of Salt"
+            ],
+            instructions: [
+                "Preheat the oven to 180°C / 350°F and grease a baking tin.",
+                "Whisk butter or oil with sugar until smooth, then add eggs and vanilla.",
+                "Fold in flour, baking powder, salt, and milk until a smooth batter forms.",
+                "Pour into the tin and bake until a toothpick inserted in the center comes out clean.",
+                "Cool before slicing and serving."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["pancake", "waffle", "crepe"])) {
+        return createRecipe({
+            name,
+            cuisine: "Breakfast",
+            prepTimeMinutes: 10,
+            cookTimeMinutes: 15,
+            servings: 3,
+            caloriesPerServing: 310,
+            tags: ["Breakfast", "Sweet", "Quick"],
+            ingredients: [
+                "1 cup All-Purpose Flour",
+                "1 tbsp Sugar",
+                "1 tsp Baking Powder",
+                "1 Egg",
+                "3/4 cup Milk",
+                "2 tbsp Melted Butter",
+                "Pinch of Salt",
+                "Honey, Maple Syrup, or Fruit for serving"
+            ],
+            instructions: [
+                "Mix flour, sugar, baking powder, and salt in a bowl.",
+                "Whisk egg, milk, and melted butter separately, then combine with the dry mixture.",
+                "Cook small portions of batter on a lightly buttered pan until bubbles appear.",
+                "Flip and cook the other side until golden.",
+                "Serve warm with syrup or fresh fruit."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["fried rice", "rice", "pulao"])) {
+        const protein = cleanQuery.includes("chicken") ? "1 cup Cooked Chicken, shredded" : cleanQuery.includes("egg") ? "2 Eggs, scrambled" : "1 cup Mixed Vegetables";
+        return createRecipe({
+            name,
+            cuisine: hasAny(cleanQuery, ["pulao", "masala"]) ? "Indian" : "Asian",
+            prepTimeMinutes: 12,
+            cookTimeMinutes: 15,
+            servings: 3,
+            caloriesPerServing: 430,
+            tags: ["Rice", "Quick", "One-Pan"],
+            ingredients: [
+                "3 cups Cooked Rice, cooled",
+                protein,
+                "1/2 cup Carrot, finely diced",
+                "1/2 cup Capsicum or Bell Pepper, chopped",
+                "3 Spring Onions, sliced",
+                "2 tbsp Soy Sauce or Light Masala Seasoning",
+                "1 tbsp Oil",
+                "Salt and Pepper to taste"
+            ],
+            instructions: [
+                "Heat oil in a wide pan or wok over high heat.",
+                "Add vegetables and stir-fry for 2-3 minutes until slightly tender.",
+                "Add the protein and toss until warmed through.",
+                "Add cooked rice, seasoning, salt, and pepper.",
+                "Stir-fry until every grain is coated and hot. Finish with spring onions."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["noodle", "ramen", "chow mein", "hakka"])) {
+        return createRecipe({
+            name,
+            cuisine: hasAny(cleanQuery, ["ramen"]) ? "Japanese" : "Chinese",
+            prepTimeMinutes: 12,
+            cookTimeMinutes: 12,
+            servings: 2,
+            caloriesPerServing: 470,
+            tags: ["Noodles", "Quick", "Savory"],
+            ingredients: [
+                "250g Noodles",
+                "1 cup Shredded Cabbage",
+                "1/2 cup Carrot, julienned",
+                "1/2 cup Capsicum, sliced",
+                "2 cloves Garlic, minced",
+                "2 tbsp Soy Sauce",
+                "1 tsp Vinegar",
+                "1 tbsp Sesame or Cooking Oil"
+            ],
+            instructions: [
+                "Boil noodles until just cooked, drain, and rinse with cold water.",
+                "Heat oil in a wok and sauté garlic for 20 seconds.",
+                "Add vegetables and stir-fry on high heat for 2-3 minutes.",
+                "Add noodles, soy sauce, vinegar, and seasoning.",
+                "Toss well and serve hot."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["curry", "masala", "paneer", "chole", "dal", "sabzi"])) {
+        const main = cleanQuery.includes("paneer") ? "300g Paneer Cubes" : cleanQuery.includes("chole") ? "2 cups Boiled Chickpeas" : cleanQuery.includes("dal") ? "1 cup Cooked Lentils" : "2 cups Mixed Vegetables";
+        return createRecipe({
+            name,
+            cuisine: "Indian",
+            difficulty: "Medium",
+            prepTimeMinutes: 15,
+            cookTimeMinutes: 25,
+            servings: 4,
+            caloriesPerServing: 390,
+            tags: ["Indian", "Curry", "Comfort Food"],
+            ingredients: [
+                main,
+                "2 tbsp Oil or Ghee",
+                "1 Onion, finely chopped",
+                "2 Tomatoes, pureed",
+                "1 tbsp Ginger-Garlic Paste",
+                "1 tsp Cumin Seeds",
+                "1 tsp Turmeric Powder",
+                "1 tsp Coriander Powder",
+                "1/2 tsp Garam Masala",
+                "Salt to taste",
+                "Fresh Coriander for garnish"
+            ],
+            instructions: [
+                "Heat oil or ghee and crackle cumin seeds.",
+                "Add onion and cook until golden, then add ginger-garlic paste.",
+                "Stir in tomato puree, turmeric, coriander powder, and salt.",
+                "Cook until the masala thickens and oil begins to separate.",
+                "Add the main ingredient and simmer until flavorful.",
+                "Finish with garam masala and coriander."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["pasta", "spaghetti", "macaroni", "lasagna"])) {
+        return createRecipe({
+            name,
+            cuisine: "Italian",
+            prepTimeMinutes: 10,
+            cookTimeMinutes: 20,
+            servings: 3,
+            caloriesPerServing: 520,
+            tags: ["Pasta", "Italian", "Dinner"],
+            ingredients: [
+                "300g Pasta",
+                "2 tbsp Olive Oil",
+                "3 cloves Garlic, minced",
+                "1 cup Tomato Sauce or Cream Sauce",
+                "1/2 cup Parmesan or Mozzarella",
+                "1 tsp Italian Herbs",
+                "Salt and Pepper to taste",
+                "Fresh Basil or Parsley"
+            ],
+            instructions: [
+                "Boil pasta in salted water until al dente.",
+                "Heat olive oil and sauté garlic until fragrant.",
+                "Add sauce, herbs, salt, and pepper, then simmer briefly.",
+                "Toss pasta with the sauce and a splash of pasta water.",
+                "Finish with cheese and herbs."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["smoothie", "shake", "lassi", "juice", "drink"])) {
+        return createRecipe({
+            name,
+            cuisine: "Beverage",
+            prepTimeMinutes: 8,
+            cookTimeMinutes: 0,
+            servings: 2,
+            caloriesPerServing: 180,
+            tags: ["Drink", "Refreshing", "No Cook"],
+            ingredients: [
+                "1 1/2 cups Chilled Milk, Yogurt, or Water",
+                "1 cup Fresh Fruit or Flavor Base",
+                "1-2 tbsp Sugar, Honey, or Jaggery",
+                "4-5 Ice Cubes",
+                "Pinch of Cardamom, Cinnamon, or Salt, optional"
+            ],
+            instructions: [
+                "Add all ingredients to a blender.",
+                "Blend until smooth and creamy.",
+                "Taste and adjust sweetness or thickness.",
+                "Serve immediately chilled."
+            ]
+        });
+    }
+
+    const protein = cleanQuery.includes("chicken")
+        ? "450g Chicken, bite-sized"
+        : cleanQuery.includes("beef")
+            ? "450g Beef, thinly sliced"
+            : cleanQuery.includes("shrimp") || cleanQuery.includes("prawn")
+                ? "300g Shrimp, cleaned"
+                : cleanQuery.includes("paneer")
+                    ? "300g Paneer Cubes"
+                    : cleanQuery.includes("tofu")
+                        ? "300g Firm Tofu, cubed"
+                        : "2 cups Seasonal Vegetables";
+
+    return createRecipe({
+        name,
+        cuisine: hasAny(cleanQuery, ["taco", "burrito", "salsa"]) ? "Mexican" : "Global",
+        difficulty: "Easy",
+        prepTimeMinutes: 12,
+        cookTimeMinutes: 18,
+        servings: 3,
+        caloriesPerServing: 410,
+        tags: ["Quick", protein.includes("Vegetables") ? "Vegetarian" : "High-Protein"],
+        ingredients: [
+            protein,
+            "1 tbsp Oil or Butter",
+            "1 Small Onion or Spring Onion, chopped",
+            "2 cloves Garlic, minced",
+            "1 cup Chopped Vegetables matching the dish",
+            "1 tsp Main Seasoning or Spice Blend",
+            "Salt to taste",
+            "Fresh Herbs or Lemon for finishing"
+        ],
+        instructions: [
+            "Prepare and cut all ingredients according to the dish style.",
+            "Heat oil or butter in a pan over medium-high heat.",
+            "Cook the onion and garlic until fragrant.",
+            "Add the main ingredient and cook until nearly done.",
+            "Add vegetables and seasoning, then toss until everything is coated.",
+            "Finish with herbs or lemon and serve hot."
+        ]
+    });
 }
 
 export async function POST(req) {

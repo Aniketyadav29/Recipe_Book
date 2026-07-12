@@ -49,7 +49,7 @@ export default function RecipeList({ recipes }) {
 
                         <AISearchBox onRecipeSaved={handleAISave} />
 
-                        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+                        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-black/20 px-5 py-2.5 text-sm font-semibold text-gray-300">
                                 <span className="text-orange-300">{totalRecipes}</span>
                                 recipes
