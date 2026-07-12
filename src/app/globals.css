@@ -101,6 +101,182 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+.hero-kitchen-stage {
+  position: relative;
+  min-height: 620px;
+  perspective: 1400px;
+}
+
+.hero-photo-card {
+  position: absolute;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #111;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.42);
+  transform-style: preserve-3d;
+}
+
+.hero-photo-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.hero-photo-card-main {
+  inset: 44px 110px 36px 20px;
+  border-radius: 34px;
+  transform: rotateY(-12deg) rotateX(6deg) translateZ(44px);
+}
+
+.hero-photo-card-small {
+  width: 230px;
+  height: 175px;
+  border-radius: 24px;
+}
+
+.hero-photo-card-top {
+  right: 28px;
+  top: 96px;
+  transform: rotateY(-22deg) rotateX(8deg) translateZ(96px);
+}
+
+.hero-photo-card-bottom {
+  right: 46px;
+  bottom: 72px;
+  transform: rotateY(-18deg) rotateX(-7deg) translateZ(86px);
+}
+
+.professional-feature-card {
+  min-height: 260px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.025)),
+    #151713;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.22);
+  transform-style: preserve-3d;
+  transition: transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease;
+}
+
+.professional-feature-card:hover {
+  transform: translateY(-8px) rotateX(3deg);
+  border-color: rgba(246, 200, 106, 0.35);
+  box-shadow: 0 34px 80px rgba(0, 0, 0, 0.34);
+}
+
+.collection-3d-card {
+  position: relative;
+  min-height: 460px;
+  overflow: hidden;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #111;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.28);
+  transform-style: preserve-3d;
+  transition: transform 320ms ease, box-shadow 320ms ease;
+}
+
+.collection-3d-card:hover {
+  transform: translateY(-10px) rotateX(4deg);
+  box-shadow: 0 42px 100px rgba(0, 0, 0, 0.42);
+}
+
+.collection-3d-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+
+.collection-3d-card:hover img {
+  transform: scale(1.07);
+}
+
+.about-image-stage {
+  position: relative;
+  perspective: 1200px;
+}
+
+.about-image-stage > img {
+  transform: rotateY(7deg) rotateX(3deg);
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.35);
+}
+
+.about-floating-panel,
+.pantry-visual-panel {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(16, 17, 16, 0.72);
+  padding: 16px 18px;
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.32);
+  backdrop-filter: blur(16px);
+}
+
+.about-floating-panel {
+  right: 24px;
+  bottom: 24px;
+}
+
+.pantry-visual-stage {
+  position: relative;
+  perspective: 1200px;
+}
+
+.pantry-visual-stage > img {
+  transform: rotateY(-7deg) rotateX(3deg);
+}
+
+.pantry-visual-panel {
+  left: 24px;
+  bottom: 24px;
+}
+
+.process-tile {
+  min-height: 250px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.075);
+  padding: 24px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(14px);
+  transition: transform 260ms ease, background 260ms ease;
+}
+
+.process-tile:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.11);
+}
+
+.pantry-result-card {
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(28, 25, 23, 0.1);
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(28, 25, 23, 0.12);
+  transform-style: preserve-3d;
+  transition: transform 260ms ease, box-shadow 260ms ease;
+}
+
+.pantry-result-card:hover {
+  transform: translateY(-8px) rotateX(3deg);
+  box-shadow: 0 34px 90px rgba(28, 25, 23, 0.2);
+}
+
+@media (max-width: 1023px) {
+  .about-image-stage > img,
+  .pantry-visual-stage > img {
+    transform: none;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
