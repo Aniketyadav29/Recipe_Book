@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Loader from "../../loading";
 import { getApprovedRecipeById } from "@/lib/recipeStorage";
+import { GENERIC_FOOD_IMAGE, getRecipeDisplayImage } from "@/lib/recipeImages";
 
 const Recipe = ({ params }) => {
     const { recipe } = params;
@@ -45,7 +46,7 @@ const Recipe = ({ params }) => {
     const ingredients = Array.isArray(detail?.ingredients) ? detail.ingredients : [];
     const instructions = Array.isArray(detail?.instructions) ? detail.instructions : [];
     const tags = Array.isArray(detail?.tags) ? detail.tags : [];
-    const heroImage = detail?.image || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200";
+    const heroImage = getRecipeDisplayImage(detail);
     const submittedBy = detail?.submittedBy || "RecipeBook";
 
     if (loading) return <Loader />;
@@ -76,7 +77,7 @@ const Recipe = ({ params }) => {
                         alt={detail.name}
                         className="h-full w-full object-cover"
                         onError={(e) => {
-                            e.currentTarget.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200";
+                            e.currentTarget.src = GENERIC_FOOD_IMAGE;
                         }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#130f0d] via-black/35 to-transparent" />

@@ -10,6 +10,7 @@ import {
     rejectRecipe,
     removeApprovedRecipe,
 } from "@/lib/recipeStorage";
+import { GENERIC_FOOD_IMAGE, getRecipeDisplayImage } from "@/lib/recipeImages";
 
 export default function AdminPage() {
     const [tab, setTab] = useState("pending");
@@ -53,6 +54,11 @@ export default function AdminPage() {
         showMsg(`🗑️ "${name}" removed from approved list.`, "error");
     };
 
+    const handleLogout = async () => {
+        await fetch("/api/admin-logout", { method: "POST" });
+        window.location.href = "/admin-login";
+    };
+
     const recipes = tab === "pending" ? pending : approved;
 
     return (
@@ -78,12 +84,20 @@ export default function AdminPage() {
                     <p className="mt-5 max-w-2xl text-lg leading-8 text-stone-300">
                         Review community submissions, approve polished recipes, and keep the public recipe book consistent with the rest of the site.
                     </p>
-                    <Link
-                        href="/recipes"
-                        className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#f6c86a] px-6 py-3 text-sm font-black uppercase tracking-wide text-[#17120d] transition-all duration-300 hover:-translate-y-1 hover:bg-white"
-                    >
-                        Back to Recipes
-                    </Link>
+                    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                        <Link
+                            href="/recipes"
+                            className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f6c86a] px-6 py-3 text-sm font-black uppercase tracking-wide text-[#17120d] transition-all duration-300 hover:-translate-y-1 hover:bg-white"
+                        >
+                            Back to Recipes
+                        </Link>
+                        <button
+                            onClick={handleLogout}
+                            className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/10 px-6 py-3 text-sm font-black uppercase tracking-wide text-white transition-all duration-300 hover:-translate-y-1 hover:bg-white/15"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </section>
 
@@ -203,10 +217,10 @@ function RecipeCard({ recipe, tab, isSelected, onPreview, onApprove, onReject, o
             {/* Image */}
             <div className="relative h-44 overflow-hidden cursor-pointer" onClick={onPreview}>
                 <img
-                    src={recipe.image || "/placeholder.jpg"}
+                    src={getRecipeDisplayImage(recipe)}
                     alt={recipe.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400"; }}
+                    onError={(e) => { e.target.src = GENERIC_FOOD_IMAGE; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 {/* Status badge */}
@@ -284,10 +298,10 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
             {/* Image */}
             <div className="relative h-56 overflow-hidden">
                 <img
-                    src={recipe.image}
+                    src={getRecipeDisplayImage(recipe)}
                     alt={recipe.name}
                     className="w-full h-full object-cover"
-                    onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600"; }}
+                    onError={(e) => { e.target.src = GENERIC_FOOD_IMAGE; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                 <button

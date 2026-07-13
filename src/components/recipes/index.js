@@ -10,6 +10,7 @@ import {
 import Link from "next/link";
 import AISearchBox from "./AISearchBox";
 import { FaArrowRight, FaStar, FaUsers, FaUtensils } from "react-icons/fa";
+import { GENERIC_FOOD_IMAGE, getRecipeDisplayImage } from "@/lib/recipeImages";
 
 export default function RecipeList({ recipes }) {
     const [localRecipes, setLocalRecipes] = useState(recipes);
@@ -18,9 +19,7 @@ export default function RecipeList({ recipes }) {
         setLocalRecipes(recipes);
     }, [recipes]);
 
-    const handleAISave = (newRecipe) => {
-        setLocalRecipes((prev) => [newRecipe, ...prev]);
-    };
+    const handleAISave = () => {};
 
     const communityCount = localRecipes?.filter((r) => r.isCommunity).length || 0;
     const totalRecipes = localRecipes?.length || 0;
@@ -36,8 +35,8 @@ export default function RecipeList({ recipes }) {
                 <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,12,10,0.96)_0%,rgba(11,12,10,0.76)_46%,rgba(11,12,10,0.35)_100%)]" />
                 <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0f1110] to-transparent" />
 
-                <div className="relative z-10 mx-auto grid min-h-[72vh] max-w-7xl grid-cols-1 items-center gap-12 px-6 pb-20 pt-32 lg:grid-cols-[0.9fr_1.1fr]">
-                    <div>
+                <div className="relative z-10 mx-auto flex min-h-[72vh] max-w-7xl flex-col justify-center px-6 pb-20 pt-32">
+                    <div className="max-w-3xl">
                         <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-stone-100 backdrop-blur-md">
                             <FaUtensils className="text-amber-300" />
                             Explore the collection
@@ -56,7 +55,7 @@ export default function RecipeList({ recipes }) {
                         </div>
                     </div>
 
-                    <div className="recipes-hero-panel">
+                    <div className="recipes-hero-panel mt-12">
                         <div className="mb-5 flex items-center justify-between gap-4">
                             <div>
                                 <p className="text-sm font-black uppercase tracking-[0.22em] text-amber-300">
@@ -112,11 +111,11 @@ export default function RecipeList({ recipes }) {
                                     <CardContent className="relative p-0">
                                         <div className="relative h-56 overflow-hidden">
                                             <img
-                                                src={recipe.image || "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600"}
+                                                src={getRecipeDisplayImage(recipe)}
                                                 alt={recipe.name}
                                                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                                                 onError={(e) => {
-                                                    e.currentTarget.src = "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600";
+                                                    e.currentTarget.src = GENERIC_FOOD_IMAGE;
                                                 }}
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />

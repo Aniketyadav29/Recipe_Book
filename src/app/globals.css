@@ -271,6 +271,7 @@ body {
 }
 
 .recipes-hero-panel {
+  position: relative;
   border-radius: 32px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background:
@@ -279,8 +280,24 @@ body {
   padding: 28px;
   box-shadow: 0 34px 90px rgba(0, 0, 0, 0.36);
   backdrop-filter: blur(18px);
-  transform: rotateY(-5deg) rotateX(3deg);
   transform-style: preserve-3d;
+}
+
+.recipes-hero-panel::before {
+  position: absolute;
+  content: "";
+  inset: 14px;
+  border-radius: inherit;
+  background: rgba(246, 200, 106, 0.16);
+  filter: blur(28px);
+  transform: translateY(24px) translateZ(-1px);
+  opacity: 0.58;
+  pointer-events: none;
+}
+
+.recipes-hero-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .recipe-book-card {

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
 import { saveAISearchedRecipe } from "@/lib/recipeStorage";
 
 export default function AISearchBox({ onRecipeSaved, compact = false }) {
@@ -10,6 +9,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
     const [recipe, setRecipe] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState("");
+    const [saveMessage, setSaveMessage] = useState("");
 
     // Dynamic loading status messages
     useEffect(() => {
@@ -40,6 +40,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
         setLoading(true);
         setRecipe(null);
         setError("");
+        setSaveMessage("");
 
         try {
             const res = await fetch("/api/ai-recipe", {
@@ -72,6 +73,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
         setShowModal(false);
         setSearchQuery("");
         setRecipe(null);
+        setSaveMessage(`"${saved.name}" was sent to the admin panel for approval.`);
         if (onRecipeSaved) {
             onRecipeSaved(saved);
         }
@@ -120,6 +122,12 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         {error}
                     </p>
                 )}
+
+                {saveMessage && (
+                    <p className="mt-3 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-2 text-left text-sm font-semibold text-emerald-300">
+                        {saveMessage}
+                    </p>
+                )}
             </div>
 
             {/* Sizzling Loading Overlay */}
@@ -142,13 +150,13 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                 </div>
             )}
 
-            {/* Recipe Modal */}
-            {showModal && recipe && typeof document !== "undefined" && createPortal(
-                <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/92 backdrop-blur-md">
-                    <div className="relative min-h-screen w-full bg-[#14100e] px-4 py-5 text-white shadow-2xl shadow-black/80 animate-scale-up sm:px-6 lg:px-10">
+            {/* Inline Recipe Preview */}
+            {showModal && recipe && (
+                <div className="mt-6 overflow-hidden rounded-[2rem] border border-white/[0.10] bg-[#14100e] text-white shadow-2xl shadow-black/45 animate-fade-in">
+                    <div className="relative w-full px-4 py-5 sm:px-6 lg:px-8">
                         <button
                             onClick={() => setShowModal(false)}
-                            className="fixed right-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-black/60 text-3xl leading-none text-stone-300 shadow-xl backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
+                            className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-black/45 text-3xl leading-none text-stone-300 shadow-xl backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
                             aria-label="Close recipe preview"
                         >
                             ×
@@ -156,7 +164,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         
                         {/* Status Note about Key */}
                         {recipe.isSimulated && (
-                            <div className="mx-auto mb-6 max-w-7xl rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 pr-16 text-sm text-amber-200 flex items-start gap-2.5 leading-relaxed">
+                            <div className="mx-auto mb-6 max-w-7xl rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 pr-14 text-sm text-amber-200 flex items-start gap-2.5 leading-relaxed">
                                 <span className="mt-0.5 text-base">💡</span>
                                 <div>
                                     <span className="font-bold">Offline AI mode</span>. This recipe was generated locally from the dish name.
@@ -248,12 +256,11 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                                 onClick={handleSave}
                                 className="w-full sm:w-auto px-8 py-3 rounded-xl bg-[#f6c86a] text-[#17120d] font-extrabold shadow-lg shadow-amber-900/20 hover:scale-105 hover:bg-white transition-all duration-300"
                             >
-                                Save to Recipe Book
+                                Submit for Admin Approval
                             </button>
                         </div>
                     </div>
-                </div>,
-                document.body
+                </div>
             )}
         </div>
     );

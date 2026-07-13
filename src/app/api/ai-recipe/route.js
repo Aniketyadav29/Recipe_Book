@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { getRecipeImageForName } from "@/lib/recipeImages";
 
 // Smart Fallback Recipe Database for common requests
 const PRESETS = {
@@ -183,6 +184,7 @@ function createRecipe({
 }) {
     return {
         name,
+        image: getRecipeImageForName(name, cuisine),
         ingredients,
         instructions,
         difficulty,
@@ -520,6 +522,7 @@ export async function POST(req) {
                         const parsedRecipe = JSON.parse(text.trim());
                         return NextResponse.json({
                             ...parsedRecipe,
+                            image: parsedRecipe.image || getRecipeImageForName(parsedRecipe.name || query, parsedRecipe.cuisine),
                             isSimulated: false
                         });
                     }
@@ -531,7 +534,10 @@ export async function POST(req) {
 
         // Run smart fallback generator if key is missing or API failed
         const simulatedRecipe = generateSimulatedRecipe(query);
-        return NextResponse.json(simulatedRecipe);
+        return NextResponse.json({
+            ...simulatedRecipe,
+            image: simulatedRecipe.image || getRecipeImageForName(simulatedRecipe.name || query, simulatedRecipe.cuisine),
+        });
 
     } catch (error) {
         console.error("Error in AI Recipe Route:", error);
