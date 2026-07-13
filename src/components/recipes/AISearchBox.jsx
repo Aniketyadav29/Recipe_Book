@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { saveAISearchedRecipe } from "@/lib/recipeStorage";
 
 export default function AISearchBox({ onRecipeSaved, compact = false }) {
@@ -142,12 +143,12 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
             )}
 
             {/* Recipe Modal */}
-            {showModal && recipe && (
-                <div className="fixed inset-0 z-50 overflow-y-auto bg-black/90 p-4 backdrop-blur-md md:p-8">
-                    <div className="relative mx-auto my-6 w-full max-w-7xl rounded-[2rem] border border-white/[0.10] bg-[#14100e]/98 p-6 text-white shadow-2xl shadow-black/80 animate-scale-up md:p-10">
+            {showModal && recipe && typeof document !== "undefined" && createPortal(
+                <div className="fixed inset-0 z-[9999] overflow-y-auto bg-black/92 backdrop-blur-md">
+                    <div className="relative min-h-screen w-full bg-[#14100e] px-4 py-5 text-white shadow-2xl shadow-black/80 animate-scale-up sm:px-6 lg:px-10">
                         <button
                             onClick={() => setShowModal(false)}
-                            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-2xl leading-none text-stone-300 transition-colors hover:bg-white/10 hover:text-white"
+                            className="fixed right-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-black/60 text-3xl leading-none text-stone-300 shadow-xl backdrop-blur-md transition-colors hover:bg-white/10 hover:text-white"
                             aria-label="Close recipe preview"
                         >
                             ×
@@ -155,7 +156,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         
                         {/* Status Note about Key */}
                         {recipe.isSimulated && (
-                            <div className="mb-6 mr-12 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-200 flex items-start gap-2.5 leading-relaxed">
+                            <div className="mx-auto mb-6 max-w-7xl rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 pr-16 text-sm text-amber-200 flex items-start gap-2.5 leading-relaxed">
                                 <span className="mt-0.5 text-base">💡</span>
                                 <div>
                                     <span className="font-bold">Offline AI mode</span>. This recipe was generated locally from the dish name.
@@ -164,7 +165,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         )}
 
                         {/* Modal Header */}
-                        <div className="mb-8 max-w-4xl">
+                        <div className="mx-auto mb-8 max-w-7xl">
                             <div className="mb-3 flex flex-wrap items-center gap-2">
                                 <span className="rounded-full bg-amber-300/15 border border-amber-300/30 px-3 py-1 text-xs font-bold text-amber-200">
                                     AI Chef Choice
@@ -179,7 +180,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         </div>
 
                         {/* Meta Parameters Grid */}
-                        <div className="grid grid-cols-2 gap-3 mb-8 sm:grid-cols-3 lg:grid-cols-6">
+                        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 mb-8 sm:grid-cols-3 lg:grid-cols-6">
                             <MetaCard label="Difficulty" value={recipe.difficulty || "Easy"} />
                             <MetaCard label="Calories" value={`${recipe.caloriesPerServing || 0} kcal`} />
                             <MetaCard label="Prep Time" value={`${recipe.prepTimeMinutes || 0} min`} />
@@ -189,15 +190,15 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         </div>
 
                         {/* Recipe Content Columns */}
-                        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr] mb-8">
+                        <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.95fr_1.25fr] mb-8">
                             {/* Ingredients */}
-                            <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6 shadow-inner md:p-7">
-                                <h3 className="text-2xl font-black mb-5 border-b border-white/[0.08] pb-3 text-amber-200">
+                            <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6 shadow-inner md:p-8">
+                                <h3 className="text-3xl font-black mb-5 border-b border-white/[0.08] pb-3 text-amber-200">
                                     Ingredients Needed
                                 </h3>
                                 <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                                     {recipe.ingredients?.map((ing, i) => (
-                                        <li key={i} className="flex gap-3 rounded-2xl border border-white/[0.06] bg-black/20 p-3 text-base text-stone-200 leading-relaxed">
+                                        <li key={i} className="flex gap-3 rounded-2xl border border-white/[0.06] bg-black/20 p-4 text-base text-stone-200 leading-relaxed">
                                             <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(246,200,106,0.8)]" />
                                             <span>{ing}</span>
                                         </li>
@@ -206,8 +207,8 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                             </div>
 
                             {/* Instructions */}
-                            <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6 shadow-inner md:p-7">
-                                <h3 className="text-2xl font-black mb-5 border-b border-white/[0.08] pb-3 text-amber-200">
+                            <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6 shadow-inner md:p-8">
+                                <h3 className="text-3xl font-black mb-5 border-b border-white/[0.08] pb-3 text-amber-200">
                                     Step-by-Step Instructions
                                 </h3>
                                 <ol className="space-y-4">
@@ -225,7 +226,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
 
                         {/* Tags */}
                         {recipe.tags && recipe.tags.length > 0 && (
-                            <div className="mb-8 flex flex-wrap items-center gap-2">
+                            <div className="mx-auto mb-8 flex max-w-7xl flex-wrap items-center gap-2">
                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mr-2">Tags:</span>
                                 {recipe.tags.map((tag, i) => (
                                     <span key={i} className="rounded-full bg-amber-300/5 border border-amber-300/15 px-3 py-1 text-xs text-amber-200 font-semibold">
@@ -236,7 +237,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         )}
 
                         {/* Modal Actions */}
-                        <div className="flex flex-col sm:flex-row gap-3 justify-end items-center pt-6 border-t border-white/[0.06]">
+                        <div className="mx-auto flex max-w-7xl flex-col sm:flex-row gap-3 justify-end items-center pt-6 border-t border-white/[0.06]">
                             <button
                                 onClick={() => setShowModal(false)}
                                 className="w-full sm:w-auto px-6 py-3 rounded-xl border border-white/10 text-gray-400 font-bold hover:bg-white/5 hover:text-white transition-colors"
@@ -251,7 +252,8 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
