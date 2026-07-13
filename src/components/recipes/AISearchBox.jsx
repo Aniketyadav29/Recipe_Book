@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { saveAISearchedRecipe } from "@/lib/recipeStorage";
 
-export default function AISearchBox({ onRecipeSaved }) {
+export default function AISearchBox({ onRecipeSaved, compact = false }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
     const [statusText, setStatusText] = useState("AI Chef is thinking...");
@@ -77,18 +77,18 @@ export default function AISearchBox({ onRecipeSaved }) {
     };
 
     return (
-        <div className="relative z-20 mx-auto mt-8 w-full max-w-3xl">
-            <div className="rounded-2xl border border-orange-300/20 bg-[#17120f]/95 p-4 shadow-2xl shadow-black/30 sm:p-5">
+        <div className={`relative z-20 w-full ${compact ? "" : "mx-auto mt-8 max-w-3xl"}`}>
+            <div className="rounded-2xl border border-white/[0.12] bg-[#12130f]/95 p-4 shadow-2xl shadow-black/30 sm:p-5">
                 <div className="mb-3 flex flex-col gap-1 text-left sm:flex-row sm:items-end sm:justify-between">
                     <div>
-                        <p className="text-sm font-extrabold uppercase tracking-widest text-orange-300">
+                        <p className="text-sm font-extrabold uppercase tracking-widest text-amber-300">
                             AI Recipe Search
                         </p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-stone-400">
                             Type a recipe name and get matching ingredients.
                         </p>
                     </div>
-                    <span className="text-xs font-semibold text-gray-500">
+                    <span className="text-xs font-semibold text-stone-500">
                         Example: Gulab Jamun, Pasta, Fried Rice
                     </span>
                 </div>
@@ -103,12 +103,12 @@ export default function AISearchBox({ onRecipeSaved }) {
                         }}
                         placeholder="Enter recipe name..."
                         disabled={loading}
-                        className="min-h-12 flex-1 rounded-xl border border-white/10 bg-black/35 px-4 text-base text-white placeholder-gray-500 outline-none transition-all duration-200 focus:border-orange-300/60 focus:ring-4 focus:ring-orange-500/10 disabled:opacity-70"
+                        className="min-h-12 flex-1 rounded-xl border border-white/10 bg-black/35 px-4 text-base text-white placeholder-stone-500 outline-none transition-all duration-200 focus:border-amber-300/70 focus:ring-4 focus:ring-amber-300/10 disabled:opacity-70"
                     />
                     <button
                         type="submit"
                         disabled={loading || !searchQuery.trim()}
-                        className="min-h-12 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 px-6 text-sm font-extrabold text-white shadow-lg shadow-orange-500/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-orange-500/35 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50"
+                        className="min-h-12 rounded-xl bg-[#f6c86a] px-6 text-sm font-black text-[#17120d] shadow-lg shadow-amber-900/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-amber-900/35 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50"
                     >
                         {loading ? "Cooking..." : "Ask AI Chef"}
                     </button>

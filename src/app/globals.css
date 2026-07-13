@@ -270,9 +270,70 @@ body {
   box-shadow: 0 34px 90px rgba(28, 25, 23, 0.2);
 }
 
+.recipes-hero-panel {
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035)),
+    rgba(15, 17, 16, 0.76);
+  padding: 28px;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(18px);
+  transform: rotateY(-5deg) rotateX(3deg);
+  transform-style: preserve-3d;
+}
+
+.recipe-book-card {
+  transform-style: preserve-3d;
+  box-shadow: 0 26px 70px rgba(0, 0, 0, 0.3);
+}
+
+.recipe-book-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.recipe-book-card::before {
+  position: absolute;
+  content: "";
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), transparent 42%, rgba(246, 200, 106, 0.08));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.recipe-book-card::after {
+  position: absolute;
+  content: "";
+  left: 24px;
+  right: 24px;
+  bottom: 0;
+  height: 48px;
+  border-radius: 999px;
+  background: rgba(246, 200, 106, 0.22);
+  filter: blur(28px);
+  transform: translateY(30px);
+  transition: transform 300ms ease, opacity 300ms ease;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.recipe-book-card:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(-3deg);
+  border-color: rgba(246, 200, 106, 0.38);
+  box-shadow: 0 38px 90px rgba(0, 0, 0, 0.42);
+}
+
+.recipe-book-card:hover::after {
+  transform: translateY(14px) scaleX(1.12);
+  opacity: 0.85;
+}
+
 @media (max-width: 1023px) {
   .about-image-stage > img,
-  .pantry-visual-stage > img {
+  .pantry-visual-stage > img,
+  .recipes-hero-panel {
     transform: none;
   }
 }
