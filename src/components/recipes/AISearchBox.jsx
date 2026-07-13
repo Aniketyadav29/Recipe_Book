@@ -143,12 +143,19 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
 
             {/* Recipe Modal */}
             {showModal && recipe && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 p-4 md:p-6 overflow-y-auto">
-                    <div className="relative w-full max-w-4xl rounded-[2rem] border border-white/[0.08] bg-[#14100e]/95 p-6 md:p-10 text-white shadow-2xl shadow-black/80 backdrop-blur-xl animate-scale-up max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 z-50 overflow-y-auto bg-black/90 p-4 backdrop-blur-md md:p-8">
+                    <div className="relative mx-auto my-6 w-full max-w-7xl rounded-[2rem] border border-white/[0.10] bg-[#14100e]/98 p-6 text-white shadow-2xl shadow-black/80 animate-scale-up md:p-10">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-2xl leading-none text-stone-300 transition-colors hover:bg-white/10 hover:text-white"
+                            aria-label="Close recipe preview"
+                        >
+                            ×
+                        </button>
                         
                         {/* Status Note about Key */}
                         {recipe.isSimulated && (
-                            <div className="mb-6 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 px-4 py-3 text-xs md:text-sm text-yellow-300 flex items-start gap-2.5 leading-relaxed">
+                            <div className="mb-6 mr-12 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-sm text-amber-200 flex items-start gap-2.5 leading-relaxed">
                                 <span className="mt-0.5 text-base">💡</span>
                                 <div>
                                     <span className="font-bold">Offline AI mode</span>. This recipe was generated locally from the dish name.
@@ -157,9 +164,9 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         )}
 
                         {/* Modal Header */}
-                        <div className="mb-8">
+                        <div className="mb-8 max-w-4xl">
                             <div className="mb-3 flex flex-wrap items-center gap-2">
-                                <span className="rounded-full bg-orange-500/20 border border-orange-500/35 px-3 py-1 text-xs font-bold text-orange-300">
+                                <span className="rounded-full bg-amber-300/15 border border-amber-300/30 px-3 py-1 text-xs font-bold text-amber-200">
                                     AI Chef Choice
                                 </span>
                                 <span className="rounded-full bg-white/5 border border-white/10 px-3 py-1 text-xs font-semibold text-gray-300">
@@ -172,7 +179,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         </div>
 
                         {/* Meta Parameters Grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mb-8">
+                        <div className="grid grid-cols-2 gap-3 mb-8 sm:grid-cols-3 lg:grid-cols-6">
                             <MetaCard label="Difficulty" value={recipe.difficulty || "Easy"} />
                             <MetaCard label="Calories" value={`${recipe.caloriesPerServing || 0} kcal`} />
                             <MetaCard label="Prep Time" value={`${recipe.prepTimeMinutes || 0} min`} />
@@ -182,16 +189,16 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                         </div>
 
                         {/* Recipe Content Columns */}
-                        <div className="grid gap-6 md:grid-cols-[0.9fr_1.1fr] mb-8">
+                        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr] mb-8">
                             {/* Ingredients */}
-                            <div className="rounded-2xl border border-white/[0.05] bg-white/[0.02] p-5 shadow-inner">
-                                <h3 className="text-xl font-bold mb-4 border-b border-white/[0.06] pb-2 text-orange-300">
+                            <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6 shadow-inner md:p-7">
+                                <h3 className="text-2xl font-black mb-5 border-b border-white/[0.08] pb-3 text-amber-200">
                                     Ingredients Needed
                                 </h3>
-                                <ul className="space-y-3">
+                                <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                                     {recipe.ingredients?.map((ing, i) => (
-                                        <li key={i} className="flex gap-2.5 text-sm text-gray-300 leading-normal">
-                                            <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(251,146,60,0.8)]" />
+                                        <li key={i} className="flex gap-3 rounded-2xl border border-white/[0.06] bg-black/20 p-3 text-base text-stone-200 leading-relaxed">
+                                            <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-amber-300 shadow-[0_0_8px_rgba(246,200,106,0.8)]" />
                                             <span>{ing}</span>
                                         </li>
                                     ))}
@@ -199,14 +206,14 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                             </div>
 
                             {/* Instructions */}
-                            <div className="rounded-2xl border border-white/[0.05] bg-white/[0.02] p-5 shadow-inner">
-                                <h3 className="text-xl font-bold mb-4 border-b border-white/[0.06] pb-2 text-orange-300">
+                            <div className="rounded-[1.5rem] border border-white/[0.08] bg-white/[0.035] p-6 shadow-inner md:p-7">
+                                <h3 className="text-2xl font-black mb-5 border-b border-white/[0.08] pb-3 text-amber-200">
                                     Step-by-Step Instructions
                                 </h3>
                                 <ol className="space-y-4">
                                     {recipe.instructions?.map((inst, i) => (
-                                        <li key={i} className="flex gap-3 text-sm text-gray-300 leading-relaxed">
-                                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-orange-500/20 bg-orange-500/10 text-xs font-bold text-orange-300">
+                                        <li key={i} className="flex gap-4 rounded-2xl border border-white/[0.06] bg-black/20 p-4 text-base text-stone-200 leading-relaxed">
+                                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-amber-300/25 bg-amber-300/10 text-sm font-black text-amber-200">
                                                 {i + 1}
                                             </span>
                                             <span>{inst}</span>
@@ -221,7 +228,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                             <div className="mb-8 flex flex-wrap items-center gap-2">
                                 <span className="text-xs font-bold text-gray-500 uppercase tracking-widest mr-2">Tags:</span>
                                 {recipe.tags.map((tag, i) => (
-                                    <span key={i} className="rounded-full bg-orange-500/5 border border-orange-500/15 px-3 py-1 text-xs text-orange-400 font-semibold">
+                                    <span key={i} className="rounded-full bg-amber-300/5 border border-amber-300/15 px-3 py-1 text-xs text-amber-200 font-semibold">
                                         #{tag}
                                     </span>
                                 ))}
@@ -238,7 +245,7 @@ export default function AISearchBox({ onRecipeSaved, compact = false }) {
                             </button>
                             <button
                                 onClick={handleSave}
-                                className="w-full sm:w-auto px-8 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-rose-500 text-white font-extrabold shadow-lg shadow-orange-500/20 hover:scale-105 hover:shadow-orange-500/35 transition-all duration-300"
+                                className="w-full sm:w-auto px-8 py-3 rounded-xl bg-[#f6c86a] text-[#17120d] font-extrabold shadow-lg shadow-amber-900/20 hover:scale-105 hover:bg-white transition-all duration-300"
                             >
                                 Save to Recipe Book
                             </button>

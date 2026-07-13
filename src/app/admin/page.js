@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Navbar from "@/components/ui/Navbar";
 import {
     getPendingRecipes,
     getApprovedRecipes,
@@ -55,49 +56,38 @@ export default function AdminPage() {
     const recipes = tab === "pending" ? pending : approved;
 
     return (
-        <div className="min-h-screen bg-[#0a0a0a] text-white">
-            {/* Background glows */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden">
-                <div className="absolute top-0 left-0 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-red-500/5 rounded-full blur-3xl" />
-            </div>
+        <div className="min-h-screen bg-[#0f1110] text-white">
+            <Navbar />
 
-            {/* Header */}
-            <header className="sticky top-0 z-50 bg-black/70 backdrop-blur-2xl border-b border-white/10">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <Link href="/" className="flex items-center gap-2 group">
-                            <span className="text-2xl group-hover:rotate-12 transition-transform duration-300">🍴</span>
-                            <span className="text-xl font-extrabold text-white tracking-tight">
-                                Recipe<span className="text-orange-400">Book</span>
-                            </span>
-                        </Link>
-                        <span className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/15 border border-orange-500/30 text-orange-400 text-xs font-bold">
-                            🛡️ Admin Panel
-                        </span>
-                    </div>
+            <section className="relative overflow-hidden">
+                <img
+                    src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1900&q=85"
+                    alt="Professional kitchen workspace"
+                    className="absolute inset-0 h-full w-full object-cover opacity-45"
+                />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,12,10,0.96)_0%,rgba(11,12,10,0.78)_52%,rgba(11,12,10,0.55)_100%)]" />
+                <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0f1110] to-transparent" />
+
+                <div className="relative z-10 mx-auto max-w-7xl px-6 pb-16 pt-32">
+                    <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-stone-100 backdrop-blur-md">
+                        Admin workspace
+                    </span>
+                    <h1 className="mt-6 max-w-4xl text-5xl font-black leading-tight text-white md:text-7xl">
+                        Recipe approval dashboard
+                    </h1>
+                    <p className="mt-5 max-w-2xl text-lg leading-8 text-stone-300">
+                        Review community submissions, approve polished recipes, and keep the public recipe book consistent with the rest of the site.
+                    </p>
                     <Link
                         href="/recipes"
-                        className="text-sm text-gray-400 hover:text-orange-400 transition-colors font-medium"
+                        className="mt-8 inline-flex items-center gap-3 rounded-full bg-[#f6c86a] px-6 py-3 text-sm font-black uppercase tracking-wide text-[#17120d] transition-all duration-300 hover:-translate-y-1 hover:bg-white"
                     >
-                        ← Back to Recipes
+                        Back to Recipes
                     </Link>
                 </div>
-            </header>
+            </section>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 py-10">
-                {/* Page Title */}
-                <div className="mb-10">
-                    <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
-                        Recipe{" "}
-                        <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-                            Approval Dashboard
-                        </span>
-                    </h1>
-                    <p className="text-gray-400">
-                        Review community-submitted recipes. Approve them to make them live or reject to remove.
-                    </p>
-                </div>
+            <div className="relative z-10 max-w-7xl mx-auto px-6 pb-20">
 
                 {/* Toast Notification */}
                 {actionMsg && (
@@ -114,30 +104,30 @@ export default function AdminPage() {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <StatCard label="Pending Review" value={pending.length} color="orange" icon="⏳" />
-                    <StatCard label="Approved Live" value={approved.length} color="green" icon="✅" />
-                    <StatCard label="Total Received" value={pending.length + approved.length} color="blue" icon="📨" />
-                    <StatCard label="Approval Rate" value={pending.length + approved.length > 0 ? `${Math.round((approved.length / (pending.length + approved.length)) * 100)}%` : "—"} color="purple" icon="📊" />
+                    <StatCard label="Pending Review" value={pending.length} />
+                    <StatCard label="Approved Live" value={approved.length} />
+                    <StatCard label="Total Received" value={pending.length + approved.length} />
+                    <StatCard label="Approval Rate" value={pending.length + approved.length > 0 ? `${Math.round((approved.length / (pending.length + approved.length)) * 100)}%` : "—"} />
                 </div>
 
                 {/* Tabs */}
-                <div className="flex gap-2 mb-6 p-1 bg-white/[0.03] border border-white/[0.07] rounded-xl w-fit">
+                <div className="flex gap-2 mb-6 p-1 bg-white/[0.04] border border-white/[0.09] rounded-2xl w-fit shadow-xl shadow-black/20">
                     {[
-                        { key: "pending", label: "⏳ Pending", count: pending.length },
-                        { key: "approved", label: "✅ Approved", count: approved.length },
+                        { key: "pending", label: "Pending", count: pending.length },
+                        { key: "approved", label: "Approved", count: approved.length },
                     ].map(({ key, label, count }) => (
                         <button
                             key={key}
                             onClick={() => { setTab(key); setPreview(null); }}
                             className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                                 tab === key
-                                    ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg"
-                                    : "text-gray-400 hover:text-white hover:bg-white/5"
+                                    ? "bg-[#f6c86a] text-[#17120d] shadow-lg"
+                                    : "text-stone-400 hover:text-white hover:bg-white/5"
                             }`}
                         >
                             {label}
                             {count > 0 && (
-                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${tab === key ? "bg-white/20" : "bg-orange-500/20 text-orange-400"}`}>
+                                <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${tab === key ? "bg-black/10" : "bg-white/10 text-amber-200"}`}>
                                     {count}
                                 </span>
                             )}
@@ -187,18 +177,11 @@ export default function AdminPage() {
 }
 
 // ── Stat Card ─────────────────────────────────────────────────────────────────
-function StatCard({ label, value, color, icon }) {
-    const colors = {
-        orange: "from-orange-500/15 border-orange-500/20 text-orange-400",
-        green: "from-green-500/15 border-green-500/20 text-green-400",
-        blue: "from-blue-500/15 border-blue-500/20 text-blue-400",
-        purple: "from-purple-500/15 border-purple-500/20 text-purple-400",
-    };
+function StatCard({ label, value }) {
     return (
-        <div className={`p-5 rounded-2xl bg-gradient-to-br ${colors[color]} to-transparent border`}>
-            <div className="text-2xl mb-1">{icon}</div>
+        <div className="p-5 rounded-[1.5rem] bg-white/[0.045] border border-white/[0.09] shadow-2xl shadow-black/20">
             <div className="text-3xl font-extrabold text-white">{value}</div>
-            <div className="text-xs text-gray-400 mt-1 font-medium">{label}</div>
+            <div className="text-xs text-stone-400 mt-2 font-black uppercase tracking-widest">{label}</div>
         </div>
     );
 }
@@ -211,10 +194,10 @@ function RecipeCard({ recipe, tab, isSelected, onPreview, onApprove, onReject, o
 
     return (
         <div
-            className={`group rounded-2xl bg-white/[0.03] border transition-all duration-300 overflow-hidden ${
+            className={`group rounded-[1.5rem] bg-[#151713] border transition-all duration-300 overflow-hidden shadow-2xl shadow-black/20 ${
                 isSelected
-                    ? "border-orange-500/50 shadow-xl shadow-orange-500/10"
-                    : "border-white/[0.07] hover:border-white/20 hover:bg-white/[0.05]"
+                    ? "border-amber-300/50 shadow-xl shadow-amber-900/10"
+                    : "border-white/[0.09] hover:border-amber-300/30 hover:bg-white/[0.05]"
             }`}
         >
             {/* Image */}
@@ -229,21 +212,21 @@ function RecipeCard({ recipe, tab, isSelected, onPreview, onApprove, onReject, o
                 {/* Status badge */}
                 <span className={`absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-bold ${
                     tab === "pending"
-                        ? "bg-amber-500/20 text-amber-400 border border-amber-500/30"
-                        : "bg-green-500/20 text-green-400 border border-green-500/30"
+                        ? "bg-amber-300/20 text-amber-200 border border-amber-300/30"
+                        : "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
                 }`}>
-                    {tab === "pending" ? "⏳ Pending" : "✅ Live"}
+                    {tab === "pending" ? "Pending" : "Live"}
                 </span>
                 {/* Community badge */}
-                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-400 border border-purple-500/30">
-                    👥 Community
+                <span className="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-bold bg-white/15 text-white border border-white/20">
+                    Community
                 </span>
             </div>
 
             {/* Info */}
             <div className="p-4">
                 <h3
-                    className="text-base font-bold text-white mb-1 line-clamp-1 cursor-pointer hover:text-orange-400 transition-colors"
+                    className="text-base font-black text-white mb-1 line-clamp-1 cursor-pointer hover:text-amber-200 transition-colors"
                     onClick={onPreview}
                 >
                     {recipe.name}
@@ -253,31 +236,31 @@ function RecipeCard({ recipe, tab, isSelected, onPreview, onApprove, onReject, o
                     <Badge>{recipe.difficulty}</Badge>
                     <Badge>{recipe.caloriesPerServing} kcal</Badge>
                 </div>
-                <p className="text-xs text-gray-500 mb-4">
-                    By <span className="text-gray-300 font-medium">{recipe.submittedBy}</span> · {date}
+                <p className="text-xs text-stone-500 mb-4">
+                    By <span className="text-stone-300 font-medium">{recipe.submittedBy}</span> · {date}
                 </p>
 
                 {/* Actions */}
                 <div className="flex gap-2">
                     <button
                         onClick={onPreview}
-                        className="flex-1 py-2 rounded-xl text-sm font-semibold bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all duration-200"
+                        className="flex-1 py-2 rounded-xl text-sm font-bold bg-white/5 hover:bg-white/10 text-stone-300 hover:text-white transition-all duration-200"
                     >
-                        👁 Preview
+                        Preview
                     </button>
                     {tab === "pending" ? (
                         <>
                             <button
                                 onClick={onApprove}
-                                className="flex-1 py-2 rounded-xl text-sm font-bold bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/20 hover:border-green-500/40 transition-all duration-200"
+                                className="flex-1 py-2 rounded-xl text-sm font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/20 hover:border-emerald-500/40 transition-all duration-200"
                             >
-                                ✅ Approve
+                                Approve
                             </button>
                             <button
                                 onClick={onReject}
                                 className="flex-1 py-2 rounded-xl text-sm font-bold bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/20 hover:border-red-500/40 transition-all duration-200"
                             >
-                                ❌ Reject
+                                Reject
                             </button>
                         </>
                     ) : (
@@ -285,7 +268,7 @@ function RecipeCard({ recipe, tab, isSelected, onPreview, onApprove, onReject, o
                             onClick={onRemove}
                             className="flex-1 py-2 rounded-xl text-sm font-bold bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/20 hover:border-red-500/40 transition-all duration-200"
                         >
-                            🗑 Remove
+                            Remove
                         </button>
                     )}
                 </div>
@@ -297,7 +280,7 @@ function RecipeCard({ recipe, tab, isSelected, onPreview, onApprove, onReject, o
 // ── Preview Panel ─────────────────────────────────────────────────────────────
 function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
     return (
-        <div className="rounded-2xl bg-white/[0.03] border border-white/[0.07] overflow-hidden">
+        <div className="rounded-[1.75rem] bg-[#151713] border border-white/[0.09] overflow-hidden shadow-2xl shadow-black/25">
             {/* Image */}
             <div className="relative h-56 overflow-hidden">
                 <img
@@ -319,7 +302,7 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
                 </div>
             </div>
 
-            <div className="p-5 space-y-4 max-h-[60vh] overflow-y-auto">
+            <div className="p-5 space-y-5 max-h-[70vh] overflow-y-auto">
                 {/* Meta */}
                 <div className="grid grid-cols-3 gap-3">
                     <MetaStat icon="🍽️" label="Cuisine" value={recipe.cuisine} />
@@ -350,7 +333,7 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
                     <ul className="space-y-1">
                         {recipe.ingredients?.map((ing, i) => (
                             <li key={i} className="flex items-start gap-2 text-sm text-gray-300">
-                                <span className="text-orange-400 mt-0.5">•</span>
+                                <span className="text-amber-300 mt-0.5">•</span>
                                 {ing}
                             </li>
                         ))}
@@ -363,7 +346,7 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
                     <ol className="space-y-2">
                         {recipe.instructions?.map((step, i) => (
                             <li key={i} className="flex items-start gap-3 text-sm text-gray-300">
-                                <span className="shrink-0 w-6 h-6 rounded-full bg-orange-500/20 text-orange-400 flex items-center justify-center text-xs font-bold">
+                                <span className="shrink-0 w-6 h-6 rounded-full bg-amber-300/15 text-amber-200 flex items-center justify-center text-xs font-bold">
                                     {i + 1}
                                 </span>
                                 <span className="leading-relaxed">{step}</span>
@@ -383,15 +366,15 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
                         <>
                             <button
                                 onClick={onApprove}
-                                className="flex-1 py-2.5 rounded-xl font-bold bg-green-500/15 hover:bg-green-500/25 text-green-400 border border-green-500/25 hover:border-green-500/50 transition-all duration-200"
+                                className="flex-1 py-2.5 rounded-xl font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/25 hover:border-emerald-500/50 transition-all duration-200"
                             >
-                                ✅ Approve Recipe
+                                Approve Recipe
                             </button>
                             <button
                                 onClick={onReject}
                                 className="flex-1 py-2.5 rounded-xl font-bold bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/25 hover:border-red-500/50 transition-all duration-200"
                             >
-                                ❌ Reject
+                                Reject
                             </button>
                         </>
                     ) : (
@@ -399,7 +382,7 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
                             onClick={onRemove}
                             className="w-full py-2.5 rounded-xl font-bold bg-red-500/15 hover:bg-red-500/25 text-red-400 border border-red-500/25 hover:border-red-500/50 transition-all duration-200"
                         >
-                            🗑 Remove from Live
+                            Remove from Live
                         </button>
                     )}
                 </div>
@@ -411,8 +394,7 @@ function PreviewPanel({ recipe, tab, onClose, onApprove, onReject, onRemove }) {
 // ── Empty State ────────────────────────────────────────────────────────────────
 function EmptyState({ tab }) {
     return (
-        <div className="text-center py-24 px-6">
-            <div className="text-6xl mb-4">{tab === "pending" ? "🎉" : "📭"}</div>
+        <div className="text-center py-24 px-6 rounded-[1.75rem] border border-white/[0.08] bg-white/[0.035]">
             <h3 className="text-xl font-bold text-white mb-2">
                 {tab === "pending" ? "All caught up!" : "No approved recipes yet"}
             </h3>
@@ -424,7 +406,7 @@ function EmptyState({ tab }) {
             {tab === "approved" && (
                 <button
                     onClick={() => {}}
-                    className="text-orange-400 hover:text-orange-300 font-medium text-sm transition-colors"
+                    className="text-amber-300 hover:text-white font-medium text-sm transition-colors"
                 >
                     Check Pending tab →
                 </button>
@@ -436,7 +418,7 @@ function EmptyState({ tab }) {
 // ── Small helpers ─────────────────────────────────────────────────────────────
 function Badge({ children }) {
     return (
-        <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-gray-400 text-xs">
+        <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-stone-400 text-xs">
             {children}
         </span>
     );
@@ -444,7 +426,7 @@ function Badge({ children }) {
 
 function MetaStat({ icon, label, value }) {
     return (
-        <div className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-center">
+        <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.07] text-center">
             <div className="text-lg">{icon}</div>
             <div className="text-xs text-gray-500 mt-0.5">{label}</div>
             <div className="text-sm font-semibold text-white mt-0.5 line-clamp-1">{value}</div>
