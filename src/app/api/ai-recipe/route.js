@@ -33,6 +33,103 @@ const PRESETS = {
         cuisine: "Indian",
         tags: ["Dessert", "Sweet", "Festival", "Indian"]
     },
+    kheer: {
+        name: "Creamy Dry Fruit Kheer",
+        ingredients: [
+            "1 litre Full-Fat Milk",
+            "1/4 cup Basmati Rice, washed and soaked for 20 minutes",
+            "1/3 cup Sugar, adjusted to taste",
+            "2 tbsp Almonds, sliced",
+            "2 tbsp Cashews, chopped",
+            "1 tbsp Pistachios, sliced",
+            "1 tbsp Raisins",
+            "4 Green Cardamom Pods, crushed",
+            "8-10 Saffron Strands, soaked in 1 tbsp warm milk",
+            "1 tsp Ghee, optional for roasting dry fruits"
+        ],
+        instructions: [
+            "Bring the milk to a boil in a heavy-bottomed pan, then reduce the heat to low.",
+            "Drain the soaked rice and add it to the milk.",
+            "Simmer slowly, stirring often, until the rice becomes soft and the milk thickens.",
+            "Add sugar, crushed cardamom, and saffron milk, then cook for 4-5 minutes.",
+            "Lightly roast cashews, almonds, pistachios, and raisins in ghee if desired.",
+            "Mix the dry fruits into the kheer and simmer for 2 more minutes.",
+            "Serve warm or chilled with extra nuts on top."
+        ],
+        difficulty: "Easy",
+        caloriesPerServing: 360,
+        prepTimeMinutes: 10,
+        cookTimeMinutes: 35,
+        servings: 4,
+        cuisine: "Indian",
+        tags: ["Dessert", "Milk", "Dry Fruits", "Indian"]
+    },
+    "butter chicken": {
+        name: "Butter Chicken",
+        ingredients: [
+            "500g Boneless Chicken, cut into pieces",
+            "1/2 cup Thick Yogurt",
+            "1 tbsp Ginger-Garlic Paste",
+            "1 tsp Kashmiri Red Chili Powder",
+            "1/2 tsp Turmeric Powder",
+            "1 tsp Garam Masala",
+            "2 tbsp Butter",
+            "1 tbsp Oil",
+            "1 Onion, finely chopped",
+            "1 cup Tomato Puree",
+            "1/2 cup Fresh Cream",
+            "1 tsp Kasuri Methi, crushed",
+            "Salt to taste",
+            "Fresh Coriander for garnish"
+        ],
+        instructions: [
+            "Marinate chicken with yogurt, ginger-garlic paste, chili powder, turmeric, garam masala, and salt for at least 30 minutes.",
+            "Heat oil and butter in a pan, then cook the marinated chicken until lightly charred and almost cooked.",
+            "Remove the chicken and add chopped onion to the same pan. Cook until soft and golden.",
+            "Add tomato puree and simmer until the masala thickens and oil begins to separate.",
+            "Return the chicken to the pan and simmer until tender.",
+            "Stir in cream and kasuri methi, then cook for 2-3 minutes on low heat.",
+            "Garnish with coriander and serve with naan, roti, or rice."
+        ],
+        difficulty: "Medium",
+        caloriesPerServing: 520,
+        prepTimeMinutes: 35,
+        cookTimeMinutes: 30,
+        servings: 4,
+        cuisine: "Indian",
+        tags: ["Chicken", "Curry", "Creamy", "Indian"]
+    },
+    "fried rice": {
+        name: "Vegetable Fried Rice",
+        ingredients: [
+            "3 cups Cooked Rice, cooled",
+            "1/2 cup Carrot, finely diced",
+            "1/2 cup Capsicum or Bell Pepper, chopped",
+            "1/2 cup Beans or Cabbage, chopped",
+            "3 Spring Onions, sliced",
+            "2 cloves Garlic, minced",
+            "2 tbsp Soy Sauce",
+            "1 tsp Vinegar",
+            "1 tbsp Oil",
+            "Salt and Pepper to taste"
+        ],
+        instructions: [
+            "Heat oil in a wok or wide pan over high heat.",
+            "Add garlic and stir-fry for a few seconds until fragrant.",
+            "Add carrots, capsicum, beans or cabbage, and stir-fry until slightly tender.",
+            "Add cooled cooked rice and toss well.",
+            "Add soy sauce, vinegar, salt, and pepper.",
+            "Stir-fry until the rice is hot and every grain is coated.",
+            "Finish with spring onions and serve hot."
+        ],
+        difficulty: "Easy",
+        caloriesPerServing: 430,
+        prepTimeMinutes: 12,
+        cookTimeMinutes: 15,
+        servings: 3,
+        cuisine: "Asian",
+        tags: ["Rice", "Quick", "Vegetarian", "One-Pan"]
+    },
     carbonara: {
         name: "Classic Spaghetti Carbonara",
         ingredients: [
@@ -152,6 +249,9 @@ const PRESETS = {
 
 const QUERY_ALIASES = [
     { keys: ["gulabjamun", "gulab jamun", "jamun"], preset: "gulab jamun" },
+    { keys: ["kheer", "payasam", "rice pudding", "milk pudding", "dry fruit kheer", "dryfruit kheer"], preset: "kheer" },
+    { keys: ["butter chicken", "murgh makhani"], preset: "butter chicken" },
+    { keys: ["fried rice"], preset: "fried rice" },
     { keys: ["carbonara"], preset: "carbonara" },
     { keys: ["margherita", "pizza"], preset: "pizza" },
     { keys: ["biryani"], preset: "biryani" },
@@ -209,6 +309,81 @@ function generateSimulatedRecipe(query) {
     }
 
     const name = titleCase(query);
+
+    if (
+        hasAny(cleanQuery, ["kheer", "payasam", "rice pudding"]) ||
+        (hasAny(cleanQuery, ["milk", "dryfruit", "dry fruit", "dryfruits", "nuts"]) &&
+            hasAny(cleanQuery, ["sweet", "dessert", "made with"]))
+    ) {
+        return createRecipe({
+            name: hasAny(cleanQuery, ["kheer", "payasam", "rice pudding"]) ? name : "Milk Dry Fruit Kheer",
+            cuisine: "Indian",
+            difficulty: "Easy",
+            prepTimeMinutes: 10,
+            cookTimeMinutes: 35,
+            servings: 4,
+            caloriesPerServing: 360,
+            tags: ["Dessert", "Milk", "Dry Fruits", "Indian"],
+            ingredients: [
+                "1 litre Full-Fat Milk",
+                "1/4 cup Basmati Rice or Vermicelli",
+                "1/3 cup Sugar or Jaggery",
+                "2 tbsp Almonds, sliced",
+                "2 tbsp Cashews, chopped",
+                "1 tbsp Pistachios, sliced",
+                "1 tbsp Raisins",
+                "1/2 tsp Cardamom Powder",
+                "8-10 Saffron Strands, optional",
+                "1 tsp Ghee for roasting dry fruits, optional"
+            ],
+            instructions: [
+                "Boil milk in a heavy-bottomed pan and reduce the heat to low.",
+                "Add soaked rice or roasted vermicelli and simmer until soft.",
+                "Stir often so the milk does not stick to the bottom.",
+                "Add sugar, cardamom, and saffron, then cook until slightly thick.",
+                "Roast dry fruits lightly in ghee if desired.",
+                "Mix dry fruits into the kheer and simmer for 2 minutes.",
+                "Serve warm or chilled."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["butter chicken", "murgh makhani", "chicken curry", "chicken masala"])) {
+        return createRecipe({
+            name,
+            cuisine: "Indian",
+            difficulty: "Medium",
+            prepTimeMinutes: 30,
+            cookTimeMinutes: 30,
+            servings: 4,
+            caloriesPerServing: 520,
+            tags: ["Chicken", "Curry", "Indian"],
+            ingredients: [
+                "500g Chicken, boneless or bone-in",
+                "1/2 cup Yogurt",
+                "1 tbsp Ginger-Garlic Paste",
+                "1 tsp Red Chili Powder",
+                "1/2 tsp Turmeric Powder",
+                "1 tsp Garam Masala",
+                "2 tbsp Butter or Oil",
+                "1 Onion, finely chopped",
+                "1 cup Tomato Puree",
+                "1/2 cup Cream or Cashew Paste",
+                "1 tsp Kasuri Methi",
+                "Salt to taste",
+                "Fresh Coriander for garnish"
+            ],
+            instructions: [
+                "Marinate chicken with yogurt, ginger-garlic paste, chili powder, turmeric, garam masala, and salt.",
+                "Cook the marinated chicken in butter or oil until lightly browned.",
+                "Remove the chicken and cook onion until golden in the same pan.",
+                "Add tomato puree and simmer until the masala thickens.",
+                "Return chicken to the pan and cook until tender.",
+                "Add cream or cashew paste and kasuri methi, then simmer gently.",
+                "Garnish with coriander and serve hot."
+            ]
+        });
+    }
 
     if (hasAny(cleanQuery, ["cake", "cupcake", "brownie", "muffin", "cookie"])) {
         return createRecipe({
@@ -413,6 +588,66 @@ function generateSimulatedRecipe(query) {
                 "Blend until smooth and creamy.",
                 "Taste and adjust sweetness or thickness.",
                 "Serve immediately chilled."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["sandwich", "toast", "grilled cheese"])) {
+        return createRecipe({
+            name,
+            cuisine: "Cafe",
+            prepTimeMinutes: 10,
+            cookTimeMinutes: 8,
+            servings: 2,
+            caloriesPerServing: 330,
+            tags: ["Snack", "Quick", "Bread"],
+            ingredients: [
+                "4 Bread Slices",
+                "2 tbsp Butter",
+                "1/2 cup Cheese, grated or sliced",
+                "1 Small Tomato, sliced",
+                "1 Small Onion, thinly sliced",
+                "1/4 cup Capsicum, sliced",
+                "2 tbsp Green Chutney or Mayonnaise",
+                "Salt and Pepper to taste"
+            ],
+            instructions: [
+                "Spread butter and chutney or mayonnaise on the bread slices.",
+                "Layer cheese, tomato, onion, and capsicum over two slices.",
+                "Season with salt and pepper.",
+                "Cover with the remaining bread slices.",
+                "Toast or grill until golden and crisp.",
+                "Slice and serve hot."
+            ]
+        });
+    }
+
+    if (hasAny(cleanQuery, ["omelette", "omelet", "egg bhurji", "scrambled egg"])) {
+        return createRecipe({
+            name,
+            cuisine: "Breakfast",
+            prepTimeMinutes: 8,
+            cookTimeMinutes: 8,
+            servings: 2,
+            caloriesPerServing: 240,
+            tags: ["Egg", "Breakfast", "Quick"],
+            ingredients: [
+                "4 Eggs",
+                "1 Small Onion, finely chopped",
+                "1 Small Tomato, finely chopped",
+                "1 Green Chili, chopped, optional",
+                "2 tbsp Milk, optional",
+                "1 tbsp Butter or Oil",
+                "Salt and Pepper to taste",
+                "Fresh Coriander, chopped"
+            ],
+            instructions: [
+                "Beat eggs with milk, salt, and pepper.",
+                "Heat butter or oil in a pan.",
+                "Add onion, tomato, and chili, then cook briefly.",
+                "Pour in the egg mixture.",
+                "Cook gently until set, folding or scrambling as needed.",
+                "Finish with coriander and serve hot."
             ]
         });
     }
