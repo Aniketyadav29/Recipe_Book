@@ -298,6 +298,52 @@ function createRecipe({
     };
 }
 
+function parseRecipeJson(text) {
+    const cleaned = String(text || "")
+        .trim()
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/```$/i, "")
+        .trim();
+
+    try {
+        return JSON.parse(cleaned);
+    } catch {
+        const firstBrace = cleaned.indexOf("{");
+        const lastBrace = cleaned.lastIndexOf("}");
+
+        if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+            throw new Error("Gemini did not return a JSON recipe.");
+        }
+
+        return JSON.parse(cleaned.slice(firstBrace, lastBrace + 1));
+    }
+}
+
+function normalizeGeminiRecipe(recipe, query) {
+    const recipeName = recipe?.name || titleCase(query);
+    const cuisine = recipe?.cuisine || "Global";
+
+    return {
+        name: recipeName,
+        image: recipe?.image || getRecipeImageForName(recipeName, cuisine),
+        ingredients: Array.isArray(recipe?.ingredients) ? recipe.ingredients : [],
+        instructions: Array.isArray(recipe?.instructions) ? recipe.instructions : [],
+        difficulty: ["Easy", "Medium", "Hard"].includes(recipe?.difficulty)
+            ? recipe.difficulty
+            : "Easy",
+        caloriesPerServing: Number(recipe?.caloriesPerServing) || 420,
+        prepTimeMinutes: Number(recipe?.prepTimeMinutes) || 15,
+        cookTimeMinutes: Number(recipe?.cookTimeMinutes) || 20,
+        servings: Number(recipe?.servings) || 4,
+        cuisine,
+        tags: Array.isArray(recipe?.tags)
+            ? recipe.tags.slice(0, 5)
+            : ["AI Generated"],
+        isSimulated: false,
+    };
+}
+
 // Smart Local Fallback Generator for any unspecified food
 function generateSimulatedRecipe(query) {
     const cleanQuery = query.trim().toLowerCase();
@@ -706,12 +752,16 @@ export async function POST(req) {
         }
 
         const apiKey = process.env.GEMINI_API_KEY;
+        const geminiModel = process.env.GEMINI_MODEL || "gemini-3.5-flash";
 
         // If API key is available, query Gemini
         if (apiKey && apiKey !== "undefined" && apiKey.length > 5) {
             try {
-                const systemPrompt = `You are a professional chef. Create a highly detailed, realistic, and delicious recipe for the dish requested: "${query}".
-                You must return the recipe as a valid JSON object matching this TypeScript structure:
+                const systemInstruction = `You are a professional chef and recipe writer.
+                Always create a realistic recipe for the exact dish requested by the user.
+                Do not reuse generic ingredients. Ingredients must match the actual dish.
+                Return only one valid JSON object. No markdown, no comments, no extra text.
+                The JSON object must match this TypeScript structure:
                 {
                     "name": string, // The exact name of the dish
                     "ingredients": string[], // List of ingredients with quantities (e.g., "2 chicken breasts, diced")
@@ -723,28 +773,22 @@ export async function POST(req) {
                     "servings": number, // Number of servings (numeric only)
                     "cuisine": string, // Cuisine type (e.g., "Italian", "Mexican", "Indian")
                     "tags": string[] // Tags like "Dinner", "Chicken", "Gluten-Free" (max 4 tags)
-                }
-                Do not return any markdown formatting (like \`\`\`json), HTML, comments, or extra text. Return ONLY the raw JSON string.`;
+                }`;
 
                 const geminiResponse = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+                    "https://generativelanguage.googleapis.com/v1beta/interactions",
                     {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
+                            "x-goog-api-key": apiKey,
                         },
                         body: JSON.stringify({
-                            contents: [
-                                {
-                                    parts: [
-                                        {
-                                            text: systemPrompt,
-                                        },
-                                    ],
-                                },
-                            ],
-                            generationConfig: {
-                                responseMimeType: "application/json",
+                            model: geminiModel,
+                            system_instruction: systemInstruction,
+                            input: `Create a recipe for: ${query}`,
+                            generation_config: {
+                                temperature: 0.7,
                             },
                         }),
                     }
@@ -752,18 +796,31 @@ export async function POST(req) {
 
                 if (geminiResponse.ok) {
                     const data = await geminiResponse.json();
-                    const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    const text =
+                        data.output_text ||
+                        data.steps?.flatMap((step) => step.content || [])
+                            ?.filter((part) => part.type === "text")
+                            ?.map((part) => part.text)
+                            ?.join("\n");
+
                     if (text) {
-                        const parsedRecipe = JSON.parse(text.trim());
-                        return NextResponse.json({
-                            ...parsedRecipe,
-                            image: parsedRecipe.image || getRecipeImageForName(parsedRecipe.name || query, parsedRecipe.cuisine),
-                            isSimulated: false
-                        });
+                        const parsedRecipe = parseRecipeJson(text);
+                        return NextResponse.json(normalizeGeminiRecipe(parsedRecipe, query));
                     }
                 }
+
+                const errorBody = await geminiResponse.text().catch(() => "");
+                console.error("Gemini API request failed:", geminiResponse.status, errorBody);
+                return NextResponse.json(
+                    { error: "Gemini API request failed. Please check the API key and model." },
+                    { status: 502 }
+                );
             } catch (err) {
-                console.error("Gemini API call failed, falling back to simulator:", err);
+                console.error("Gemini API call failed:", err);
+                return NextResponse.json(
+                    { error: "Gemini API call failed. Please check the API key and try again." },
+                    { status: 502 }
+                );
             }
         }
 
